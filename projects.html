@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Projects | Rasnet Studios</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0a0a0d;
+        }
+        .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+        .custom-card {
+            background: linear-gradient(180deg, #12121a 0%, #0e0e14 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .custom-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.05);
+        }
+        /* Filtreleme için gizleme sınıfı */
+        .project-item.hidden-project {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-gray-300 antialiased selection:bg-blue-600 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0d]/80 backdrop-blur-lg border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="font-display text-2xl font-800 text-white tracking-wide">RASNET<span class="text-blue-500">.</span></a>
+            <div class="flex items-center space-x-8 text-sm font-medium">
+                <a href="index.html" class="hover:text-white text-gray-400 transition-colors">← Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header & Filter Section -->
+    <main class="flex-grow pt-32 pb-24">
+        <div class="max-w-7xl mx-auto px-6">
+            
+            <!-- Page Title -->
+            <div class="max-w-2xl mb-12">
+                <span class="text-xs uppercase tracking-widest text-blue-500 font-bold block mb-2">// PORTFOLIO</span>
+                <h1 class="font-display text-4xl md:text-5xl font-800 text-white mb-4">All Shipped Products</h1>
+                <p class="text-gray-400 font-light text-sm">Explore our complete ecosystem of software utilities, tools, and interactive games built for the global market.</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-3 mb-12 border-b border-white/5 pb-6">
+                <button onclick="filterProjects('all')" id="btn-all" class="filter-btn px-5 py-2 rounded-xl bg-blue-600 text-white text-xs font-semibold tracking-wider uppercase transition-all">All Projects</button>
+                <button onclick="filterProjects('software')" id="btn-software" class="filter-btn px-5 py-2 rounded-xl bg-[#12121a] border border-white/5 hover:border-white/20 text-gray-400 hover:text-white text-xs font-semibold tracking-wider uppercase transition-all">Software & SaaS</button>
+                <button onclick="filterProjects('games')" id="btn-games" class="filter-btn px-5 py-2 rounded-xl bg-[#12121a] border border-white/5 hover:border-white/20 text-gray-400 hover:text-white text-xs font-semibold tracking-wider uppercase transition-all">Games</button>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+                
+                <!-- Project Card: LiveSub -->
+                <div class="project-item p-8 rounded-2xl custom-card flex flex-col justify-between" data-category="software">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl">📺</span>
+                            <span class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] font-mono rounded border border-emerald-500/20 uppercase tracking-widest">APP</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">LiveSub</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            An intelligent real-time screen-capturing and translation desktop assistant. Uses highly optimized OCR layout parsers and translator libraries to display immediate subtitles anywhere on your desktop.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-6 text-xs text-gray-500 font-mono">
+                            <span>Platform: Windows</span>
+                            <span>•</span>
+                            <span>Microsoft Store</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <a href="#" class="text-sm text-blue-400 font-semibold hover:underline flex items-center space-x-1">
+                                <span>Next</span>
+                                <span>→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Placeholder Project Card (Gelecekte ekleyeceğin bir oyun için hazır taslak) -->
+                <div class="project-item p-8 rounded-2xl custom-card flex flex-col justify-between" data-category="games">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-2xl">🕹️</span>
+                            <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-[10px] font-mono rounded border border-purple-500/20 uppercase tracking-widest">GAME</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">TORE</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            A story-driven game about a young man living in a nomadic tribe in ancient times, whose adventure begins when he rescues a merchant and his daughter from a cult known as the Templars.
+                        </p>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-6 text-xs text-gray-500 font-mono">
+                            <span>Platform: Windows</span>
+                            <span>•</span>
+                            <span>In Development</span>
+                        </div>
+                        <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                            <a href="#" class="text-sm text-blue-400 font-semibold hover:underline flex items-center space-x-1">
+                                <span>Next</span>
+                                <span>→</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 bg-[#07070a]">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-medium text-gray-500 tracking-widest uppercase">
+            <div class="font-display font-bold text-white text-base tracking-wide">RASNET STUDIOS<span class="text-blue-500">.</span></div>
+            <div>&copy; 2026 All Rights Reserved.</div>
+            <div class="flex space-x-6 text-gray-400 normal-case tracking-normal">
+                <a href="#" class="hover:text-white transition-colors">Instagram</a>
+                <a href="#" class="hover:text-white transition-colors">Steam</a>
+                <a href="#" class="hover:text-white transition-colors">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Filter Logic Script -->
+    <script>
+        function filterProjects(category) {
+            const items = document.querySelectorAll('.project-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            // Buton renklerini sıfırla ve aktif olanı boya
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-[#12121a]', 'text-gray-400', 'border-white/5');
+            });
+
+            const activeBtn = document.getElementById(`btn-${category}`);
+            activeBtn.classList.remove('bg-[#12121a]', 'text-gray-400', 'border-white/5');
+            activeBtn.classList.add('bg-blue-600', 'text-white');
+
+            // Kartları filtrele
+            items.forEach(item => {
+                if (category === 'all' || item.getAttribute('data-category') === category) {
+                    item.classList.remove('hidden-project');
+                } else {
+                    item.classList.add('hidden-project');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

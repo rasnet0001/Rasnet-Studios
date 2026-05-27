@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TORE - Official Website</title>
+    <style>
+        /* --- GENERAL DESIGN & COLOR PALETTE --- */
+        :root {
+            --bg-dark: #0a0b0e;
+            --bg-card: #11131a;
+            --bg-card-alt: #161922;
+            --accent-gold: #cda242;
+            --accent-gold-hover: #e4be63;
+            --text-light: #f5f6f9;
+            --text-muted: #858a96;
+            --border-poly: #1f232e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 11, 14, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-poly);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(205, 162, 66, 0.2);
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-gold);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(17,19,26,0.3) 0%, rgba(10,11,14,1) 85%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920') no-repeat center center/cover;
+        }
+
+        .hero-tag {
+            font-size: 13px;
+            color: var(--accent-gold);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hero h1 {
+            font-size: 90px;
+            font-weight: 900;
+            letter-spacing: 15px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 40%, #858a96 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 16px 45px;
+            background-color: var(--accent-gold);
+            color: var(--bg-dark);
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 12px;
+            clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+            transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(205, 162, 66, 0.2);
+        }
+
+        /* --- SECTION SETTINGS --- */
+        section {
+            padding: 120px 8%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-title h2 {
+            font-size: 38px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .section-title h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--accent-gold);
+            margin: 15px auto 0 auto;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        /* --- STORY & VISION --- */
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 26px;
+            color: var(--accent-gold);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .about-text p {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .about-visual {
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            height: 400px;
+            clip-path: polygon(0 2%, 98% 0, 100% 95%, 4% 100%);
+            background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=800') center center/cover;
+        }
+
+        /* --- THE CONFLICT (FACTIONS) --- */
+        .conflict-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .side-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+        }
+
+        .side-oba::before { background: var(--accent-gold); }
+        .side-templay::before { background: #9e2a2b; }
+
+        .side-card h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .side-oba h3 { color: var(--accent-gold); }
+        .side-templay h3 { color: #9e2a2b; }
+
+        .side-subtitle {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .side-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* --- GAMEPLAY FEATURES --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            padding: 40px 30px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-gold);
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* --- SOUNDSCAPE & ATMOSPHERE --- */
+        .audio-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #0f1117 50%, var(--bg-dark) 100%);
+            text-align: center;
+        }
+
+        .audio-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            padding: 40px;
+            clip-path: polygon(0 0, 100% 4%, 97% 100%, 3% 96%);
+        }
+
+        .audio-mix-text {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .track-player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card-alt);
+            padding: 20px 30px;
+            border: 1px solid var(--border-poly);
+            border-radius: 4px;
+        }
+
+        .track-info {
+            text-align: left;
+        }
+
+        .track-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .track-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .play-btn {
+            background: transparent;
+            border: 2px solid var(--accent-gold);
+            color: var(--accent-gold);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+        }
+
+        /* --- EPISODIC SECTIONS --- */
+        .episodes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .episode-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            border-top: 4px solid var(--border-poly);
+            overflow: hidden;
+        }
+
+        .episode-card.active { border-top-color: var(--accent-gold); }
+
+        .episode-img {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .ep1-bg { background: linear-gradient(45deg, #181b22, #242936); }
+        .ep2-bg { background: linear-gradient(45deg, #14141c, #1f1f2b); }
+        .ep3-bg { background: linear-gradient(45deg, #101922, #182633); }
+
+        .episode-content { padding: 35px; }
+
+        .ep-status {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            background: rgba(205, 162, 66, 0.1);
+            color: var(--accent-gold);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ep-status.planned {
+            background: rgba(133, 138, 150, 0.1);
+            color: var(--text-muted);
+        }
+
+        .episode-content h3 { font-size: 22px; margin-bottom: 8px; text-transform: uppercase; }
+        .episode-content h4 { font-size: 13px; color: var(--accent-gold); margin-bottom: 20px; font-weight: 500; }
+        .episode-content p { color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+
+        /* --- FAQ --- */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-poly);
+            margin-bottom: 15px;
+            padding: 25px 30px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--accent-gold);
+        }
+
+        .faq-question {
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-light);
+        }
+
+        .faq-answer {
+            margin-top: 15px;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* --- NEWSLETTER --- */
+        .newsletter-section {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-poly);
+            text-align: center;
+            padding: 80px 8%;
+        }
+
+        .newsletter-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-container h3 {
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .newsletter-container p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group input {
+            flex: 1;
+            padding: 15px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-poly);
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .form-group button {
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+            border: none;
+            padding: 0 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .form-group button:hover { background: var(--accent-gold-hover); }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #050608;
+            padding: 50px 8%;
+            text-align: center;
+            border-top: 1px solid var(--border-poly);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .footer-logo {
+            font-weight: 900;
+            color: var(--accent-gold);
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 22px;
+        }
+
+        footer p { margin-bottom: 8px; }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            header { padding: 20px 4%; }
+            nav { display: none; }
+            .hero h1 { font-size: 55px; letter-spacing: 8px; }
+            .about-container, .conflict-container { grid-template-columns: 1fr; gap: 40px; }
+            section { padding: 80px 4%; }
+            .form-group { flex-direction: column; }
+            .form-group button { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <header>
+        <div class="logo">TORE</div>
+        <nav>
+            <a href="#story">Story</a>
+            <a href="#factions">World</a>
+            <a href="#gameplay">Gameplay</a>
+            <a href="#atmosphere">Atmosphere</a>
+            <a href="#episodes">Episodes</a>
+            <a href="#faq">FAQ</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-tag">Stylized Low-Poly Action-Adventure</div>
+        <h1>TORE</h1>
+        <p>To stand against the oppressor and protect the innocent is the ultimate law of the code. Embark on a fateful journey as a nomadic chieftain's son against a global dark threat.</p>
+        <a href="#episodes" class="btn">Join the Clan - Explore Episodes</a>
+    </section>
+
+    <!-- STORY & VISION -->
+    <section id="story">
+        <div class="section-title">
+            <h2>Story & Vision</h2>
+            <p>A linear, highly cinematic narrative driven by fate and honor.</p>
+        </div>
+        <div class="about-container">
+            <div class="about-text">
+                <h3>The Fate of a Bound Warrior</h3>
+                <p>As the son of a nomadic chieftain, a highly skilled hunter and warrior, your life changes when you encounter and rescue a merchant and his daughter from the ruthless Templars. However, this act of righteousness pushes the boundaries of your clan's territory into an all-out war.</p>
+                <p>As you dig deeper, you realize this is not just about two refugees; the Templars are on the verge of executing a massive, catastrophic plot to wipe out millions of innocents. No choices, no alternate endings—just a powerful, dramatic tale of a hero fulfilling his destiny.</p>
+            </div>
+            <div class="about-visual"></div>
+        </div>
+    </section>
+
+    <!-- FACTIONS SECTION -->
+    <section id="factions" style="background-color: #08090c;">
+        <div class="section-title">
+            <h2>Two Worlds Collide</h2>
+            <p>The unyielding justice of the Nomadic Code vs. Global Tyranny.</p>
+        </div>
+        <div class="conflict-container">
+            <!-- Clan Side -->
+            <div class="side-card side-oba">
+                <h3>The Nomadic Clan</h3>
+                <div class="side-subtitle">The Last Sanctuary for the Innocent</div>
+                <p>A deeply traditional, nature-bound people tightly tied to their ancient code ("Tore"). Armed with bows, arrows, and swords, their greatest strength is their unbreakable loyalty. By code, any innocent soul seeking shelter under their roof becomes a matter of absolute honor.</p>
+            </div>
+            <!-- Templar Side -->
+            <div class="side-card side-templay">
+                <h3>The Templars</h3>
+                <div class="side-subtitle">The Global Oppression Machine</div>
+                <p>A merciless organization driven by pure malice and control. Operating from the shadows, they are executing a colossal plot to eliminate millions. With disciplined armies, heavy armor, and brutal efficiency, they crush anyone in their path.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- GAMEPLAY FEATURES -->
+    <section id="gameplay">
+        <div class="section-title">
+            <h2>Gameplay Mechanics</h2>
+            <p>Tactical survival paired with high-impact combat dynamics.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🏹</div>
+                <h3>Bow & Arrow</h3>
+                <p>Your ultimate tool for long-range stealth, precise hunting, and quietly infiltrating fortified Templar outposts.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚔️</div>
+                <h3>Impactful Combo Combat</h3>
+                <p>Engage in visceral, face-to-face melee combat with high-quality animations and a rewarding combo-based sword system.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Dodge & Resource Management</h3>
+                <p>Button-mashing won't save you. Perfectly time your dodges, parry incoming strikes, and tightly manage your health and stamina.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3>Hub-Based Progression</h3>
+                <p>Zero open-world fatigue. Seamlessly move between the clan grounds, ruins, and outposts via highly cinematic transitions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOUNDSCAPE & ATMOSPHERE -->
+    <section id="atmosphere" class="audio-section">
+        <div class="section-title">
+            <h2>Soundscape & Atmosphere</h2>
+            <p>A mesmerizing musical blend of two clashing cultures.</p>
+        </div>
+        <div class="audio-container">
+            <p class="audio-mix-text">
+                The world of TORE comes alive not just through its striking stylized visuals, but through your ears. The nomadic spirit is captured through mystical ethnic string instruments (inspired by the kopuz and kemençe), clashing with the dark, heavy presence of grand church choirs and pipe organs representing the Templars.
+            </p>
+            <div class="track-player">
+                <div class="track-info">
+                    <div class="track-title">TORE Main Theme (Concept Mix)</div>
+                    <div class="track-desc">Ethnic Strings vs. Gothic Choirs</div>
+                </div>
+                
+                <audio id="tore-theme" src="TORE_Musics_1.mp3"></audio>
+                
+                <button class="play-btn" id="play-trigger">▶</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- EPISODIC SECTIONS -->
+    <section id="episodes" style="background-color: #08090c;">
+        <div class="section-title">
+            <h2>Epizodic Release Model</h2>
+            <p>No years of waiting. Immersive 3-hour episodes delivered sequentially.</p>
+        </div>
+        <div class="episodes-container">
+            <!-- Episode 1 -->
+            <div class="episode-card active">
+                <div class="episode-img ep1-bg">[ EPISODE 1: IN-GAME SCREENSHOT ]</div>
+                <div class="episode-content">
+                    <span class="ep-status">In Production</span>
+                    <h3>Episode 1: The First Spark</h3>
+                    <h4>Playtime: ~3 Hours</h4>
+                    <p>Introduction to the clan, rescuing the first refugees, initial hot contact with the Templars, and discovering the grand plot. Ends on a thrilling cliffhanger.</p>
+                </div>
+            </div>
+            <!-- Episode 2 -->
+            <div class="episode-card">
+                <div class="episode-img ep2-bg">[ EPISODE 2: CONCEPT ART ]</div>
+                <div class="episode-content">
+                    <span class="ep-status planned">Planning Stage</span>
+                    <h3>Episode 2: Wild Lands</h3>
+                    <h4>Playtime: ~3 Hours</h4>
+                    <p>Leaving the clan safety, exploring vast new environments, untangling the details of the plot, and facing smarter enemy variations.</p>
+                </div>
+            </div>
+            <!-- Episode 3 -->
+            <div class="episode-card">
+                <div class="episode-img ep3-bg">[ EPISODE 3: CONCEPT ART ]</div>
+                <div class="episode-content">
+                    <span class="ep-status planned">Planning Stage</span>
+                    <h3>Episode 3: The Reckoning</h3>
+                    <h4>Playtime: ~3 Hours</h4>
+                    <p>The climax of the story. Unlocking ancient secrets, uniting with new allies, and standing face-to-face against the ultimate Templar leaders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq">
+        <div class="section-title">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know about the TORE project.</p>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">What does the Episodic release model mean? <span>+</span></div>
+                <div class="faq-answer">Instead of waiting years for a massive game to finish, we release self-contained storytelling episodes lasting roughly 3 hours each. This allows us to deliver high-quality content faster and adjust based on community feedback.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Why is there no open-world or choice system? <span>+</span></div>
+                <div class="faq-answer">TORE aims to tell a highly focused, linear, and emotionally heavy cinematic story. We wanted to eliminate unnecessary open-world fluff to keep players completely engaged in the intense narrative of the hero's destiny.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">What are the target platforms? <span>+</span></div>
+                <div class="faq-answer">The game is being heavily optimized and developed primarily for PC (Steam / Epic Games Store).</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter-section">
+        <div class="newsletter-container">
+            <h3>Stay Updated</h3>
+            <p>Sign up to receive release date announcements for Episode 1 and secure your chance to join closed alpha tests.</p>
+            <div class="form-group">
+                <input type="email" placeholder="Enter your email address">
+                <button>Join Clan</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">TORE</div>
+        <p>An Epic Journey Blending Ancient Codes with Stylized Low-Poly Aesthetics.</p>
+        <p style="font-size: 12px; margin-top: 20px; color: #444;">&copy; 2026 TORE Project. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const playBtn = document.getElementById('play-trigger');
+        const audio = document.getElementById('tore-theme');
+
+        playBtn.addEventListener('click', function() {
+            // Eğer müzik duruyorsa oynat
+            if (audio.paused) {
+                audio.play();
+                playBtn.textContent = '⏸'; // Buton simgesini duraklat yap
+            } 
+            // Eğer müzik çalıyorsa durdur
+            else {
+                audio.pause();
+                playBtn.textContent = '▶'; // Buton simgesini tekrar oynat yap
+            }
+        });
+
+        // Müzik kendiliğinden bittiğinde butonu tekrar oynat simgesine döndür
+        audio.addEventListener('ended', function() {
+            playBtn.textContent = '▶';
+        });
+    </script>
+
+</body>
+</html>

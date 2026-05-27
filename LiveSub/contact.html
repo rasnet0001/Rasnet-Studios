@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact LiveSub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'Poppins',sans-serif; background:#0f172a; color:#e5e7eb; }
+
+    header { display:flex; justify-content:space-between; align-items:center; padding:20px 60px; background:#020617; position:sticky; top:0; }
+    .logo { font-size:24px; font-weight:700; color:#38bdf8; }
+    nav a { margin-left:20px; color:white; text-decoration:none; }
+    nav a:hover { color:#38bdf8; }
+
+    .logo .live {
+      color: #ffffff; /* beyaz */
+    }
+
+    .logo .sub {
+      color: #1e3a8a; /* lacivert */
+    }
+
+    .container { max-width:1100px; margin:auto; padding:80px 20px; }
+
+    h1 { font-size:42px; margin-bottom:20px; }
+    h2 { margin-top:40px; color:#38bdf8; }
+    p { line-height:1.9; margin-top:15px; }
+
+    .grid {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:40px;
+      margin-top:40px;
+    }
+
+    .card {
+      background:#020617;
+      padding:25px;
+      border-radius:15px;
+      border:1px solid rgba(255,255,255,0.05);
+    }
+
+    input, textarea {
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+      background:#0f172a;
+      color:white;
+    }
+
+    button {
+      margin-top:15px;
+      padding:12px 25px;
+      border:none;
+      border-radius:10px;
+      background:#38bdf8;
+      color:#020617;
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    button:hover { transform:scale(1.05); }
+
+    .info-box {
+      margin-top:20px;
+      padding:20px;
+      background:#020617;
+      border-radius:15px;
+      border:1px solid rgba(255,255,255,0.05);
+    }
+
+    footer { text-align:center; padding:30px; background:#020617; margin-top:60px; }
+
+    @media(max-width:900px){
+      .grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+  <span class="live">Live</span><span class="sub">Sub</span>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <h1>Contact Us</h1>
+
+  <p>
+    We are always happy to hear from you. Whether you have questions, feedback, business inquiries, or technical issues,
+    the LiveSub team is here to help. Communication is an important part of improving our platform, and your input plays
+    a key role in shaping the future of LiveSub.
+  </p>
+
+  <p>
+    Please feel free to reach out using the contact form below or through our direct contact channels. We aim to respond
+    to all inquiries as quickly as possible.
+  </p>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Send a Message</h2>
+      <form onsubmit="sendMail(event)">
+        <label>Your Name</label>
+        <input type="text" placeholder="Enter your name">
+
+        <label>Email Address</label>
+        <input type="email" placeholder="Enter your email">
+
+        <label>Subject</label>
+        <input type="text" placeholder="Message subject">
+
+        <label>Your Message</label>
+        <textarea rows="5" placeholder="Write your message..."></textarea>
+
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Contact Information</h2>
+        <p>
+          If you prefer direct communication, you can contact us via email. We typically respond within 24-48 hours.
+        </p>
+        <p>
+          📧 Email: mr.ensartosun@hotmail.com
+        </p>
+      </div>
+
+      <div class="info-box">
+        <h2>Support</h2>
+        <p>
+          For technical issues, please include detailed information about your problem, including your system specifications,
+          screenshots if possible, and steps to reproduce the issue. This helps us resolve your problem faster.
+        </p>
+      </div>
+
+      <div class="info-box">
+        <h2>Business & Partnerships</h2>
+        <p>
+          We are open to collaborations, partnerships, and integration opportunities. If you are a company or developer
+          interested in working with LiveSub, feel free to reach out with your proposal.
+        </p>
+      </div>
+
+      <div class="info-box">
+        <h2>Feedback & Suggestions</h2>
+        <p>
+          Your feedback is extremely valuable to us. If you have ideas for new features or improvements,
+          do not hesitate to share them. Many of our updates are based on user feedback.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="info-box">
+    <h2>Response Time</h2>
+    <p>
+      We aim to respond to all inquiries within 24 to 48 hours. However, response times may vary depending on the volume
+      of requests. We appreciate your patience and understanding.
+    </p>
+  </div>
+
+  <div class="info-box">
+    <h2>Privacy Notice</h2>
+    <p>
+      Any information you provide through this contact page will only be used to respond to your inquiry.
+      We do not share your personal information with third parties. For more details, please review our Privacy Policy.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 LiveSub. All rights reserved.</p>
+</footer>
+
+<script>
+function sendMail(event) {
+    event.preventDefault();
+
+    const name = document.querySelector('input[placeholder=\"Enter your name\"]').value;
+    const email = document.querySelector('input[type=\"email\"]').value;
+    const subject = document.querySelector('input[placeholder=\"Message subject\"]').value;
+    const message = document.querySelector('textarea').value;
+
+    const mailSubject = encodeURIComponent(subject + " - LiveSub Contact");
+    const mailBody = encodeURIComponent(
+        "Name: " + name + "\\n" +
+        "Email: " + email + "\\n\\n" +
+        "Message:\\n" + message
+    );
+
+    window.location.href = `mailto:mr.ensartosun@hotmail.com?subject=${mailSubject}&body=${mailBody}`;
+}
+</script>
+
+</body>
+</html>
