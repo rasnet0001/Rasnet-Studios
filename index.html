@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasnet Studios | Next-Gen Software & Game Lab</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0a0a0d;
+        }
+        .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+        .custom-card {
+            background: linear-gradient(180deg, #12121a 0%, #0e0e14 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .custom-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-300 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0d]/80 backdrop-blur-lg border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="font-display text-2xl font-800 text-white tracking-wide">RASNET<span class="text-blue-500">.</span></a>
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-white text-gray-400 transition-colors">Who We Are</a>
+                <a href="#live-projects" class="hover:text-white text-gray-400 transition-colors">Active Projects</a>
+                <a href="#future-projects" class="hover:text-white text-gray-400 transition-colors">Future Pipeline</a>
+                <a href="#contact" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-500 transition-all font-semibold">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-1/4 left-1/3 w-96 h-96 bg-blue-600/10 blur-[130px] rounded-full"></div>
+            <div class="absolute bottom-1/4 right-1/3 w-96 h-96 bg-purple-600/10 blur-[130px] rounded-full"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center z-10">
+            <h1 class="font-display text-4xl sm:text-6xl md:text-7xl font-800 text-white leading-tight mb-6">
+                Shaping the Future of <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-purple-400">Software & Games.</span>
+            </h1>
+            <p class="text-gray-400 max-w-xl mx-auto text-base sm:text-lg font-light mb-10 leading-relaxed">
+                We craft high-performance desktop applications, immersive independent video games, and smart automation tools designed to solve real-world problems.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#live-projects" class="w-full sm:w-auto px-8 py-3.5 bg-white text-black font-semibold rounded-xl hover:bg-gray-200 transition-colors text-center text-sm">
+                    Explore Our Products
+                </a>
+                <a href="#contact" class="w-full sm:w-auto px-8 py-3.5 border border-white/10 text-gray-300 font-semibold rounded-xl hover:bg-white/5 transition-colors text-center text-sm">
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section id="about" class="py-24 border-t border-white/5 bg-[#0d0d12]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <div class="lg:col-span-4">
+                    <span class="text-xs uppercase tracking-widest text-blue-500 font-bold block mb-2">// OUR PHILOSOPHY</span>
+                    <h2 class="font-display text-3xl md:text-4xl font-700 text-white leading-tight">Built Different. Designed for Scale.</h2>
+                </div>
+                <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-3">🎯 Mission</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            To transform complex computational structures and high-end tech into lightweight, seamless, and lightning-fast utilities for end-users. We bridge the gap between heavy code and clean interfaces.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-3">👁️ Vision</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed">
+                            To become a globally recognized independent product laboratory, launching highly automated SaaS platforms, standalone software utilities, and innovative video games backed by major global publishers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ready & Active Projects -->
+    <section id="live-projects" class="py-24 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-2xl mb-16">
+                <span class="text-xs uppercase tracking-widest text-emerald-500 font-bold block mb-2">// SHIPPED & LIVE</span>
+                <h2 class="font-display text-3xl md:text-4xl font-700 text-white mb-4">Active Products</h2>
+                <p class="text-gray-400 font-light text-sm">Production-ready products that you can download, license, or access directly right now.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Project 1 -->
+                <div class="p-8 rounded-2xl custom-card flex flex-col justify-between">
+                    <div>
+                        <div class="text-2xl mb-4">📺</div>
+                        <h3 class="text-xl font-bold text-white mb-2">LiveSub</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            A next-generation desktop utility that captures real-time on-screen pixels, running them through efficient OCR engines to generate instant translations and custom subtitles. The language barrier is now gone.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                        <span class="text-xs text-gray-500 font-mono">Status: Live</span>
+                        <a href="LiveSub/index.html" class="text-sm text-blue-400 font-semibold hover:underline">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Button: All Projects Page Redirect -->
+            <div class="text-center mt-12">
+                <a href="projects.html" class="inline-flex items-center space-x-2 px-6 py-3 border border-white/10 hover:border-blue-500/50 rounded-xl text-white font-medium text-sm transition-all bg-white/5 hover:bg-blue-600/10">
+                    <span>View All Projects</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Planned Projects -->
+    <section id="future-projects" class="py-24 border-t border-white/5 bg-[#0d0d12]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-2xl mb-16">
+                <span class="text-xs uppercase tracking-widest text-purple-500 font-bold block mb-2">// IN THE PIPELINE</span>
+                <h2 class="font-display text-3xl md:text-4xl font-700 text-white mb-4">Future Ecosystem & R&D</h2>
+                <p class="text-gray-400 font-light text-sm">Under active development. Concepts heading straight to alpha testing, major app distribution channels, or strategic publisher platforms.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Future Project 1 -->
+                <div class="p-8 rounded-2xl custom-card flex flex-col justify-between">
+                    <div>
+                        <div class="text-2xl mb-4">🕹️</div>
+                        <h3 class="text-xl font-bold text-white mb-2">TORE</h3>
+                        <p class="text-gray-400 text-sm font-light leading-relaxed mb-6">
+                            A story-driven game about a young man living in a nomadic tribe in ancient times, whose adventure begins when he rescues a merchant and his daughter from a cult known as the Templars.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                        <span class="text-xs text-gray-500 font-mono">Status: In Development</span>
+                        <a href="TORE/index.html" class="text-sm text-blue-400 font-semibold hover:underline">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form with Native Mail Integration -->
+    <section id="contact" class="py-24 border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <span class="text-xs uppercase tracking-widest text-blue-500 font-bold block mb-2">// LET'S CONNECT</span>
+                <h2 class="font-display text-3xl md:text-5xl font-700 text-white mb-4">Contact Us</h2>
+                <p class="text-gray-400 font-light text-sm">Have a feature request, licensing inquiry, or publishing proposal? Fill out your details below.</p>
+            </div>
+            
+            <form id="mailForm" class="space-y-4">
+                <div>
+                    <input type="text" id="userName" required placeholder="Your Full Name" class="w-full bg-[#12121a] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 text-sm">
+                </div>
+                <div>
+                    <textarea rows="5" id="userMessage" required placeholder="Your Message..." class="w-full bg-[#12121a] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors text-sm uppercase tracking-wider">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer & Social Accounts -->
+    <footer class="py-12 border-t border-white/5 bg-[#07070a]">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs font-medium text-gray-500 tracking-widest uppercase">
+            <div class="font-display font-bold text-white text-base tracking-wide">RASNET STUDIOS<span class="text-blue-500">.</span></div>
+            <div>&copy; 2026 All Rights Reserved.</div>
+            <!-- Social Profiles -->
+            <div class="flex space-x-6 text-gray-400 normal-case tracking-normal">
+                <a href="https://www.instagram.com/rasnet0001/" class="hover:text-white transition-colors">Instagram</a>
+                <a href="https://www.youtube.com/@RasnetStudios" class="hover:text-white transition-colors">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Form Handler Script -->
+    <script>
+        document.getElementById('mailForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Sayfa yenilenmesini engeller
+            
+            const name = document.getElementById('userName').value;
+            const message = document.getElementById('userMessage').value;
+            const targetEmail = 'rasnet0001@gmail.com';
+            
+            const subject = encodeURIComponent(`Rasnet Studios Contact - Message from ${name}`);
+            const body = encodeURIComponent(`Hello Rasnet Studios Team,\n\n${message}\n\nBest regards,\n${name}`);
+            
+            // Mailto linkini oluşturup tarayıcıyı oraya yönlendiriyoruz
+            window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+        });
+    </script>
+
+</body>
+</html>
