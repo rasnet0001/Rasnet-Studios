@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FAQ — Stream Sultan</title>
+    <meta name="description" content="Find answers to common questions about Stream Sultan, peer-to-peer screen sharing, stream links, audio, quality, privacy, and troubleshooting.">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #06070b;
+            --bg-soft: #0b0d13;
+            --panel: rgba(255,255,255,0.045);
+            --panel-strong: rgba(255,255,255,0.07);
+            --border: rgba(255,255,255,0.09);
+            --border-hover: rgba(255,255,255,0.17);
+            --text: #f5f7fb;
+            --muted: #9ba3b4;
+            --muted-2: #70788a;
+            --accent: #7c5cff;
+            --accent-2: #9c86ff;
+            --green: #42e6a4;
+            --blue: #55a8ff;
+            --shadow: 0 25px 80px rgba(0,0,0,0.45);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 5%, rgba(124,92,255,0.14), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(70,140,255,0.08), transparent 25%),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: linear-gradient(to bottom, black, transparent 80%);
+            z-index: -2;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1180px, calc(100% - 32px));
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px 0 22px;
+            background: rgba(10,12,18,0.72);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            z-index: 100;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            background: linear-gradient(135deg, #8b72ff, #5d40e8);
+            box-shadow: 0 8px 25px rgba(124,92,255,0.35);
+        }
+
+        .brand span {
+            font-size: 16px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a {
+            color: #aeb5c4;
+            font-size: 14px;
+            padding: 10px 13px;
+            border-radius: 10px;
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+            background: rgba(255,255,255,0.055);
+        }
+
+        .nav-cta {
+            padding: 11px 17px !important;
+            color: white !important;
+            background: linear-gradient(135deg, #8167ff, #6045e9) !important;
+            box-shadow: 0 8px 22px rgba(124,92,255,0.25);
+        }
+
+        /* HERO */
+
+        .hero {
+            width: min(1050px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 180px 0 90px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 13px;
+            border: 1px solid rgba(124,92,255,0.25);
+            background: rgba(124,92,255,0.08);
+            border-radius: 999px;
+            color: #b9acff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            margin-bottom: 25px;
+        }
+
+        .eyebrow-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(66,230,164,0.8);
+        }
+
+        h1 {
+            font-size: clamp(48px, 7vw, 82px);
+            line-height: 0.98;
+            letter-spacing: -4px;
+            margin-bottom: 25px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(110deg, #fff 10%, #b6a8ff 55%, #7c5cff 90%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            max-width: 690px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.75;
+        }
+
+        /* SEARCH */
+
+        .search-wrap {
+            max-width: 720px;
+            margin: 45px auto 0;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            height: 64px;
+            padding: 0 24px 0 58px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            outline: none;
+            background: rgba(255,255,255,0.055);
+            color: white;
+            font-size: 15px;
+            box-shadow: var(--shadow);
+            transition: 0.25s;
+        }
+
+        .search-box::placeholder {
+            color: #737b8b;
+        }
+
+        .search-box:focus {
+            border-color: rgba(124,92,255,0.55);
+            box-shadow:
+                0 0 0 4px rgba(124,92,255,0.08),
+                var(--shadow);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #737b8b;
+            font-size: 19px;
+        }
+
+        /* CONTENT */
+
+        .content {
+            width: min(1050px, calc(100% - 40px));
+            margin: 0 auto 120px;
+        }
+
+        .category-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 55px;
+        }
+
+        .category-btn {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.035);
+            color: #9ca4b4;
+            padding: 10px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: 0.25s;
+            font-size: 13px;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            color: white;
+            border-color: rgba(124,92,255,0.45);
+            background: rgba(124,92,255,0.13);
+        }
+
+        .faq-section {
+            margin-bottom: 72px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: rgba(124,92,255,0.11);
+            border: 1px solid rgba(124,92,255,0.18);
+            color: #a998ff;
+            font-size: 18px;
+        }
+
+        .section-heading h2 {
+            font-size: 25px;
+            letter-spacing: -0.7px;
+        }
+
+        .section-heading p {
+            color: var(--muted-2);
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .faq-list {
+            border-top: 1px solid var(--border);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-question {
+            width: 100%;
+            border: 0;
+            background: none;
+            color: white;
+            text-align: left;
+            padding: 24px 52px 24px 4px;
+            position: relative;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 650;
+        }
+
+        .faq-question::after {
+            content: "+";
+            position: absolute;
+            right: 6px;
+            top: 19px;
+            width: 32px;
+            height: 32px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            color: #8f97a7;
+            background: rgba(255,255,255,0.045);
+            font-size: 20px;
+            transition: 0.25s;
+        }
+
+        .faq-item.open .faq-question::after {
+            content: "−";
+            color: #b4a6ff;
+            background: rgba(124,92,255,0.12);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .faq-answer-inner {
+            padding: 0 55px 25px 4px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .faq-answer-inner strong {
+            color: #e9ebf1;
+        }
+
+        .faq-answer-inner a {
+            color: #a99bff;
+        }
+
+        .faq-answer-inner a:hover {
+            text-decoration: underline;
+        }
+
+        /* QUICK INFO */
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 0 0 80px;
+        }
+
+        .quick-card {
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,0.055),
+                rgba(255,255,255,0.018)
+            );
+        }
+
+        .quick-card .number {
+            color: #a99aff;
+            font-size: 27px;
+            font-weight: 800;
+            margin-bottom: 9px;
+        }
+
+        .quick-card h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .quick-card p {
+            color: var(--muted-2);
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        /* TROUBLESHOOT */
+
+        .trouble-box {
+            padding: 32px;
+            border: 1px solid rgba(85,168,255,0.15);
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at 100% 0%, rgba(85,168,255,0.08), transparent 35%),
+                rgba(255,255,255,0.025);
+            margin-top: 35px;
+        }
+
+        .trouble-box h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .trouble-box > p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .trouble-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .trouble-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: rgba(0,0,0,0.18);
+        }
+
+        .trouble-card h4 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .trouble-card p {
+            color: var(--muted-2);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* CTA */
+
+        .cta {
+            width: min(1050px, calc(100% - 40px));
+            margin: 0 auto 100px;
+            padding: 70px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            border: 1px solid rgba(124,92,255,0.2);
+            background:
+                radial-gradient(circle at 50% 0%, rgba(124,92,255,0.18), transparent 55%),
+                rgba(255,255,255,0.035);
+        }
+
+        .cta::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            left: 50%;
+            top: -260px;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            background: rgba(124,92,255,0.12);
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .cta h2 {
+            position: relative;
+            font-size: clamp(30px, 4vw, 48px);
+            letter-spacing: -2px;
+            margin-bottom: 13px;
+        }
+
+        .cta p {
+            position: relative;
+            max-width: 580px;
+            margin: 0 auto 28px;
+            color: var(--muted);
+        }
+
+        .cta-button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            color: white;
+            background: linear-gradient(135deg, #8167ff, #6045e9);
+            box-shadow: 0 12px 35px rgba(124,92,255,0.25);
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.25s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 17px 40px rgba(124,92,255,0.35);
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 55px 0 30px;
+        }
+
+        .footer-inner {
+            width: min(1050px, calc(100% - 40px));
+            margin: auto;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            padding-bottom: 45px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-brand .brand {
+            margin-bottom: 15px;
+        }
+
+        .footer-brand p {
+            color: var(--muted-2);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer-columns {
+            display: flex;
+            gap: 70px;
+        }
+
+        .footer-column h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c7ccd7;
+            margin-bottom: 15px;
+        }
+
+        .footer-column a {
+            display: block;
+            color: var(--muted-2);
+            font-size: 13px;
+            margin-bottom: 9px;
+            transition: 0.2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            color: #626a79;
+            font-size: 12px;
+        }
+
+        /* NO RESULTS */
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 55px 20px;
+            color: var(--muted);
+        }
+
+        .no-results strong {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+            .nav-links {
+                display: none;
+            }
+
+            .navbar {
+                height: 62px;
+            }
+
+            .hero {
+                padding-top: 145px;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trouble-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                letter-spacing: -2.5px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .search-box {
+                height: 58px;
+            }
+
+            .faq-question {
+                font-size: 15px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .faq-answer-inner {
+                padding-right: 35px;
+            }
+
+            .trouble-box {
+                padding: 22px;
+            }
+
+            .cta {
+                padding: 55px 22px;
+            }
+
+            .footer-columns {
+                gap: 35px;
+                flex-wrap: wrap;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">S</div>
+            <span>Stream Sultan</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#features">Features</a>
+            <a href="how-to.html">How It Works</a>
+            <a href="faq.html" class="active">FAQ</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="sender.html" class="nav-cta">Start Streaming</a>
+        </div>
+    </nav>
+
+
+    <!-- HERO -->
+    <header class="hero">
+
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            HELP CENTER
+        </div>
+
+        <h1>
+            Questions?<br>
+            <span class="gradient-text">We've got answers.</span>
+        </h1>
+
+        <p>
+            Everything you need to know about Stream Sultan —
+            from creating a stream and sharing your link to audio,
+            video quality, privacy and troubleshooting.
+        </p>
+
+        <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input
+                type="text"
+                id="faqSearch"
+                class="search-box"
+                placeholder="Search questions..."
+                autocomplete="off"
+            >
+        </div>
+
+    </header>
+
+
+    <main class="content">
+
+        <!-- QUICK FACTS -->
+        <section class="quick-grid">
+
+            <div class="quick-card">
+                <div class="number">01</div>
+                <h3>No account required</h3>
+                <p>
+                    Start a stream directly from your browser.
+                    There is no registration or login process.
+                </p>
+            </div>
+
+            <div class="quick-card">
+                <div class="number">02</div>
+                <h3>Peer-to-peer streaming</h3>
+                <p>
+                    Your stream is delivered through a real-time
+                    WebRTC connection between participants.
+                </p>
+            </div>
+
+            <div class="quick-card">
+                <div class="number">03</div>
+                <h3>Share one simple link</h3>
+                <p>
+                    Create a session, copy the generated viewer link
+                    and send it to the people you want to watch.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- CATEGORIES -->
+        <div class="category-bar">
+
+            <button class="category-btn active" data-category="all">
+                All Questions
+            </button>
+
+            <button class="category-btn" data-category="getting-started">
+                Getting Started
+            </button>
+
+            <button class="category-btn" data-category="streaming">
+                Streaming
+            </button>
+
+            <button class="category-btn" data-category="quality">
+                Quality & Audio
+            </button>
+
+            <button class="category-btn" data-category="privacy">
+                Privacy & Security
+            </button>
+
+            <button class="category-btn" data-category="troubleshooting">
+                Troubleshooting
+            </button>
+
+        </div>
+
+
+        <!-- GETTING STARTED -->
+        <section class="faq-section" data-section="getting-started">
+
+            <div class="section-heading">
+                <div class="section-icon">→</div>
+                <div>
+                    <h2>Getting Started</h2>
+                    <p>Everything you need for your first stream.</p>
+                </div>
+            </div>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What is Stream Sultan?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan is a simple browser-based screen sharing service.
+                            It lets you share your screen with other people through a
+                            real-time peer-to-peer connection. You create a stream,
+                            receive a viewer link, and share that link with your friends
+                            or audience.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Do I need to create an account?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <strong>No.</strong> Stream Sultan does not require an account,
+                            username, password, registration or login. The goal is to make
+                            starting a temporary screen-sharing session as quick as possible.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How do I start a stream?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Open the <a href="sender.html">Start Streaming</a> page,
+                            configure your stream settings, choose what you want to share
+                            when your browser asks for permission, and start the session.
+                            Stream Sultan will generate a viewer link that you can share.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        How do viewers join my stream?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Simply send them the viewer link generated when you create
+                            the stream. They can open that link in a supported browser
+                            and connect to the session without creating an account.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can multiple people watch at the same time?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Yes. A stream can be viewed by multiple connected viewers.
+                            Because Stream Sultan uses peer-to-peer WebRTC connections,
+                            actual performance can depend on the broadcaster's upload
+                            connection, the viewers' connections, browser capabilities
+                            and the number of active connections.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- STREAMING -->
+        <section class="faq-section" data-section="streaming">
+
+            <div class="section-heading">
+                <div class="section-icon">◉</div>
+                <div>
+                    <h2>Streaming</h2>
+                    <p>How screen sharing and connections work.</p>
+                </div>
+            </div>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What can I share?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan is designed primarily for screen sharing.
+                            Depending on the browser and the permission options presented
+                            during screen capture, you can generally select a screen,
+                            application window or browser tab.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can I share system audio?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Yes, where supported by the browser and selected capture
+                            source, system audio can be included with the screen stream.
+                            Audio capture availability depends on the browser, operating
+                            system and whether the selected sharing source supports audio.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Does Stream Sultan support camera streaming?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan is currently focused on screen sharing rather
+                            than webcam broadcasting. Camera support may be introduced
+                            separately in the future.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Does Stream Sultan record my stream?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan does not provide a built-in recording archive
+                            for your streams. The service is designed around real-time
+                            sharing rather than uploading and storing completed videos.
+                            Your browser and other network infrastructure may still
+                            process technical connection information required for the
+                            service to operate.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What happens if I close the sender page?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            The broadcaster's page is responsible for maintaining the
+                            active session. If you close or leave it, the stream can no
+                            longer continue normally. Viewers may lose their connection.
+                            To start sharing again, reopen the sender page and create
+                            a new session if necessary.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Can I pause and resume a stream?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Browser screen-sharing sessions are controlled by the active
+                            capture stream. If the browser or operating system stops the
+                            capture, you may need to start screen sharing again.
+                            Behavior can vary depending on the browser.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- QUALITY -->
+        <section class="faq-section" data-section="quality">
+
+            <div class="section-heading">
+                <div class="section-icon">✦</div>
+                <div>
+                    <h2>Quality & Audio</h2>
+                    <p>Resolution, FPS, bandwidth and sound.</p>
+                </div>
+            </div>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What resolutions are supported?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan is designed to support multiple screen-sharing
+                            quality levels, including <strong>720p, 1080p and 4K</strong>.
+                            The actual quality you receive can depend on the selected
+                            source, browser, hardware, network conditions and available
+                            bandwidth.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Does Stream Sultan support 60 FPS?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Yes. The service is designed around <strong>30 FPS and
+                            60 FPS</strong> streaming options. Higher frame rates can
+                            require significantly more processing power and bandwidth,
+                            especially at higher resolutions.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Why does my stream look blurry?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Video quality can be affected by network bandwidth,
+                            congestion, browser behavior, hardware performance and
+                            the selected resolution or frame rate. If the connection
+                            cannot consistently sustain the requested quality, the
+                            effective stream quality may decrease.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Why is my stream delayed?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan uses real-time WebRTC communication, but
+                            network conditions can still introduce latency. Distance,
+                            routing, congestion, Wi-Fi quality and system performance
+                            can all affect the delay between the broadcaster and viewer.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Why can't viewers hear the audio?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            First check whether audio sharing was enabled when the
+                            screen capture was started. Some browsers and operating
+                            systems only provide system-audio capture for particular
+                            sharing sources. Also check that the viewer's browser is
+                            not muted and that the selected source actually provides
+                            audio.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- PRIVACY -->
+        <section class="faq-section" data-section="privacy">
+
+            <div class="section-heading">
+                <div class="section-icon">◇</div>
+                <div>
+                    <h2>Privacy & Security</h2>
+                    <p>What happens to your stream and connection.</p>
+                </div>
+            </div>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Is my screen uploaded to Stream Sultan?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan is designed around peer-to-peer WebRTC
+                            communication. The service itself is not designed as a
+                            conventional video-hosting platform where your screen
+                            recording is uploaded into a permanent video library.
+                            Technical infrastructure may still be involved in
+                            establishing and maintaining connections.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Are streams permanently stored?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            No built-in permanent stream archive is provided.
+                            Stream Sultan is intended for live, temporary screen
+                            sharing rather than permanent video storage.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Is my viewer link private?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Treat your generated viewer link as a private invitation.
+                            Anyone who obtains the link may be able to attempt to
+                            connect to the associated session. For that reason, only
+                            share the link with people you trust and avoid posting
+                            private stream links publicly.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Does Stream Sultan require my personal information?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            There is no account creation flow requiring a name,
+                            username or password. However, browsers, networks and
+                            third-party infrastructure involved in delivering the
+                            service can process technical information as part of
+                            normal internet communication.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        What technology does Stream Sultan use?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Stream Sultan uses standard web technologies and
+                            <strong>WebRTC</strong> for real-time media communication.
+                            PeerJS is used to simplify peer connection management.
+                            The browser handles the actual screen capture and media
+                            permissions.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- TROUBLESHOOTING -->
+        <section class="faq-section" data-section="troubleshooting">
+
+            <div class="section-heading">
+                <div class="section-icon">!</div>
+                <div>
+                    <h2>Troubleshooting</h2>
+                    <p>Quick fixes for common connection problems.</p>
+                </div>
+            </div>
+
+            <div class="faq-list">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        The viewer cannot connect. What should I do?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Make sure the broadcaster's sender page is still open and
+                            the session is active. Confirm that the viewer is using the
+                            complete generated link. If the broadcaster's connection
+                            was interrupted, refreshing the sender page and creating
+                            a new session may resolve the issue.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        The stream suddenly stopped. Why?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            A stream can be interrupted by a lost network connection,
+                            browser issues, the capture permission being revoked,
+                            the sender page being closed, or other WebRTC connection
+                            problems. Reconnecting or creating a new session can
+                            restore the stream.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        The viewer sees a black screen. What can I try?
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Try refreshing the viewer page and reconnecting to the
+                            session. The broadcaster can also stop and restart screen
+                            sharing. If the problem continues, restarting the sender
+                            session can establish a fresh WebRTC connection.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        The browser won't let me share my screen.
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            Screen capture is controlled by your browser and operating
+                            system. Check whether screen-sharing permissions were
+                            denied, make sure you are using a supported browser,
+                            and try starting the capture again. Browser restrictions
+                            may also prevent capture in certain contexts.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Refreshing the page didn't fix the problem.
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            If reconnecting does not work, the fastest solution is
+                            often to close the current session, reopen the sender
+                            page and create a new stream. A new session produces a
+                            new viewer link and a fresh connection state.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="trouble-box">
+
+                <h3>Still having trouble?</h3>
+
+                <p>
+                    Most connection problems come from the browser, network,
+                    capture permissions or a session that is no longer active.
+                    Try these quick checks first.
+                </p>
+
+                <div class="trouble-grid">
+
+                    <div class="trouble-card">
+                        <h4>↻ Refresh the page</h4>
+                        <p>
+                            Reload the viewer or sender page to establish a fresh
+                            connection attempt.
+                        </p>
+                    </div>
+
+                    <div class="trouble-card">
+                        <h4>◉ Check the connection</h4>
+                        <p>
+                            Make sure both the broadcaster and viewer have a stable
+                            internet connection.
+                        </p>
+                    </div>
+
+                    <div class="trouble-card">
+                        <h4>▣ Check permissions</h4>
+                        <p>
+                            Confirm that the browser was allowed to capture the
+                            selected screen or application.
+                        </p>
+                    </div>
+
+                    <div class="trouble-card">
+                        <h4>↗ Create a new session</h4>
+                        <p>
+                            If the old session is stuck, create a new stream and
+                            share its newly generated link.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+
+        <div class="no-results" id="noResults">
+            <strong>No matching questions found.</strong>
+            Try a different search term or browse one of the categories above.
+        </div>
+
+    </main>
+
+
+    <!-- CTA -->
+    <section class="cta">
+
+        <h2>Ready to share your screen?</h2>
+
+        <p>
+            No account. No complicated setup. Create a stream,
+            share the link and start watching in real time.
+        </p>
+
+        <a href="sender.html" class="cta-button">
+            Start Streaming
+            <span>→</span>
+        </a>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+
+        <div class="footer-inner">
+
+            <div class="footer-top">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="brand">
+                        <div class="brand-icon">S</div>
+                        <span>Stream Sultan</span>
+                    </a>
+
+                    <p>
+                        Simple peer-to-peer screen sharing.
+                        Create a stream, share the link and watch
+                        in real time — without accounts.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-columns">
+
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="index.html">Home</a>
+                        <a href="index.html#features">Features</a>
+                        <a href="sender.html">Start Streaming</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="how-to.html">How It Works</a>
+                        <a href="faq.html">FAQ</a>
+                        <a href="privacy.html">Privacy</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Stream</h4>
+                        <a href="sender.html">Create Stream</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © 2026 Stream Sultan. All rights reserved.
+                </span>
+
+                <span>
+                    Built for simple, real-time sharing.
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <script>
+        // FAQ accordion
+        document.querySelectorAll(".faq-question").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const item = button.parentElement;
+                const answer = item.querySelector(".faq-answer");
+
+                // Close other opened questions
+                document.querySelectorAll(".faq-item.open").forEach(openItem => {
+                    if (openItem !== item) {
+                        openItem.classList.remove("open");
+                        openItem.querySelector(".faq-answer").style.maxHeight = null;
+                    }
+                });
+
+                item.classList.toggle("open");
+
+                if (item.classList.contains("open")) {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                } else {
+                    answer.style.maxHeight = null;
+                }
+
+            });
+
+        });
+
+
+        // Category filtering
+        const categoryButtons = document.querySelectorAll(".category-btn");
+        const sections = document.querySelectorAll(".faq-section");
+
+        categoryButtons.forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                categoryButtons.forEach(btn => btn.classList.remove("active"));
+                button.classList.add("active");
+
+                const category = button.dataset.category;
+
+                sections.forEach(section => {
+
+                    if (category === "all") {
+                        section.style.display = "";
+                    } else {
+                        section.style.display =
+                            section.dataset.section === category
+                                ? ""
+                                : "none";
+                    }
+
+                });
+
+                document.getElementById("noResults").style.display = "none";
+
+            });
+
+        });
+
+
+        // Search
+        const searchInput = document.getElementById("faqSearch");
+        const noResults = document.getElementById("noResults");
+
+        searchInput.addEventListener("input", () => {
+
+            const query = searchInput.value.toLowerCase().trim();
+
+            let found = false;
+
+            // Reset category filter
+            categoryButtons.forEach(btn => btn.classList.remove("active"));
+            document.querySelector('[data-category="all"]').classList.add("active");
+
+            sections.forEach(section => {
+
+                section.style.display = "";
+
+                const items = section.querySelectorAll(".faq-item");
+                let sectionHasMatch = false;
+
+                items.forEach(item => {
+
+                    const question = item
+                        .querySelector(".faq-question")
+                        .textContent
+                        .toLowerCase();
+
+                    const answer = item
+                        .querySelector(".faq-answer")
+                        .textContent
+                        .toLowerCase();
+
+                    const matches =
+                        query === "" ||
+                        question.includes(query) ||
+                        answer.includes(query);
+
+                    item.style.display = matches ? "" : "none";
+
+                    if (matches) {
+                        sectionHasMatch = true;
+                        found = true;
+                    }
+
+                });
+
+                section.style.display = sectionHasMatch ? "" : "none";
+
+            });
+
+            noResults.style.display =
+                query !== "" && !found ? "block" : "none";
+
+        });
+    </script>
+
+</body>
+</html>
