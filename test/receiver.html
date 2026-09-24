@@ -1,260 +1,105 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Screen Receiver</title>
-
-
-    <!--
-        PeerJS client.
-    -->
-    <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-
-
-    <style>
-
-        body {
-            margin: 0;
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-
-        .topbar {
-            padding: 15px;
-            background: #1d1d1d;
-        }
-
-        #status {
-            color: #8ee68e;
-        }
-
-        video {
-            width: 100vw;
-            height: calc(100vh - 70px);
-
-            /*
-             * Ekran görüntüsünün oranını bozma.
-             */
-            object-fit: contain;
-
-            background: black;
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekran Paylaşımı - Alıcı</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 960px; margin: 30px auto; padding: 0 16px; background:#111; color:#eee; }
+  h1 { font-size: 20px; }
+  video { width: 100%; border-radius:8px; margin-top:12px; background:#000; display:none; }
+  #log { margin-top:16px; font-size:12px; color:#999; max-height:160px; overflow-y:auto; }
+</style>
 </head>
-
-
 <body>
 
+<h1>📺 Alıcı (Receiver)</h1>
+<div id="status">Başlatılıyor...</div>
+<video id="remoteVideo" autoplay playsinline controls></video>
+<div id="log"></div>
 
-<div class="topbar">
-
-    <strong>Screen Receiver</strong>
-
-    <span id="status">
-        Bağlanıyor...
-    </span>
-
-</div>
-
-
-<!--
-    Sender'ın ekran stream'i burada oynatılacak.
--->
-<video
-    id="remoteVideo"
-    autoplay
-    playsinline
-    controls="false">
-</video>
-
-
+<!-- Sender ile aynı PeerJS kütüphanesi ve aynı bulut sinyalleşme sunucusu
+     kullanılıyor ki iki taraf birbirini bulabilsin. -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
+function log(msg) {
+  const el = document.getElementById('log');
+  el.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
 
+// ---- Linkten id ve pass parametrelerini ayrıştır ----
+// Link formatı: receiver.html?id=<senderPeerId>&pass=<gizliSifre>
+const params = new URLSearchParams(window.location.search);
+const senderId = params.get('id');
+const password = params.get('pass');
 
-    /*
-     * ============================================================
-     * 1. URL'DEN ID VE TOKEN AL
-     * ============================================================
-     *
-     * Sender bize şöyle bir URL vermişti:
-     *
-     * receiver.html?id=ABC123&pass=xxxxxxxx
-     *
-     * URLSearchParams bu değerleri parçalamamızı sağlar.
-     */
-    const params =
-        new URLSearchParams(window.location.search);
+if (!senderId || !password) {
+  document.getElementById('status').textContent = '❌ Geçersiz link: id veya pass eksik.';
+  throw new Error('Eksik URL parametresi (id/pass)');
+}
 
+document.getElementById('status').textContent = 'PeerJS sunucusuna bağlanılıyor...';
 
-    const senderPeerId =
-        params.get("id");
+// Receiver'ın da kendi peer kimliği olması gerekiyor çünkü sender bize
+// WebRTC call (medya akışı) açabilmek için bir hedef id'ye ihtiyaç duyar.
+const peer = new Peer();
 
+peer.on('open', (myId) => {
+  log('Kendi ID: ' + myId);
+  document.getElementById('status').textContent = 'Gönderici aranıyor: ' + senderId;
 
-    const accessToken =
-        params.get("pass");
+  // ---- Parola doğrulama: önce bir DataConnection açıyoruz ----
+  // WebRTC medya bağlantısı (görüntü akışı) HENÜZ başlamıyor; önce sender'a
+  // parolayı gönderip onayını bekliyoruz. Böylece parolası olmayan biri
+  // sender id'sini bilse bile hiçbir zaman görüntü akışı alamaz.
+  const conn = peer.connect(senderId, { reliable: true });
 
+  conn.on('open', () => {
+    conn.send({ type: 'auth', pass: password });
+    log('Parola gönderildi, doğrulama bekleniyor...');
+  });
 
-    /*
-     * ============================================================
-     * 2. URL KONTROLÜ
-     * ============================================================
-     *
-     * ID veya pass yoksa devam etmiyoruz.
-     */
-    if (!senderPeerId || !accessToken) {
-
-        document.getElementById("status").textContent =
-            "Geçersiz yayın linki.";
-
-        throw new Error(
-            "Sender Peer ID veya access token eksik."
-        );
+  conn.on('data', (data) => {
+    if (data.type === 'auth-ok') {
+      document.getElementById('status').textContent = '✅ Doğrulandı, yayın bekleniyor...';
+      log('Parola doğrulandı.');
+    } else if (data.type === 'auth-fail') {
+      document.getElementById('status').textContent = '❌ Parola hatalı, bağlantı reddedildi.';
+      log('Parola reddedildi.');
+      conn.close();
     }
+  });
 
+  conn.on('error', (err) => log('Bağlantı hatası: ' + err));
+});
 
-    /*
-     * ============================================================
-     * 3. RECEIVER İÇİN YENİ PEER OLUŞTUR
-     * ============================================================
-     *
-     * Receiver'ın ayrıca kendi Peer ID'si olur.
-     *
-     * Ancak bu sistemde sender'a ulaşmak için
-     * senderPeerId kullanılacak.
-     */
-    const peer = new Peer();
+// ---- Sender'dan gelen WebRTC call'u (ekran yayınını) yanıtla ----
+// Bu, sender parolayı doğruladıktan SONRA tetiklenir (bkz. sender.html).
+// call.answer() argümansız çağrılıyor çünkü receiver geri kendi kamerasını/
+// mikrofonunu göndermiyor; bu tek yönlü (sender -> receiver) bir yayın.
+peer.on('call', (call) => {
+  log('Gelen yayın isteği: ' + call.peer);
+  call.answer();
 
+  call.on('stream', (remoteStream) => {
+    const video = document.getElementById('remoteVideo');
+    video.srcObject = remoteStream;
+    video.style.display = 'block';
+    document.getElementById('status').textContent = '🔴 Canlı yayın alınıyor';
+    log('Yayın akışı başladı.');
+  });
 
-    /*
-     * ============================================================
-     * 4. PEER AÇILDIĞINDA SENDER'I ARA
-     * ============================================================
-     */
-    peer.on("open", () => {
+  call.on('close', () => {
+    document.getElementById('status').textContent = 'Yayın sona erdi.';
+    log('Yayın kapandı.');
+  });
+});
 
-        document.getElementById("status").textContent =
-            "Sender aranıyor...";
-
-
-        /*
-         * ========================================================
-         * WEBRTC ÇAĞRISI
-         * ========================================================
-         *
-         * Sender bize ekran gönderecek.
-         *
-         * Bu nedenle receiver'ın kendi stream'ine ihtiyacı yok.
-         *
-         * peer.call() MediaStream beklediği için:
-         *
-         * null
-         *
-         * gönderiyoruz.
-         *
-         * Ayrıca metadata içerisine secret token koyuyoruz.
-         *
-         * Sender'ın "call" eventinde bu token kontrol edilecek.
-         */
-        const call =
-            peer.call(
-                senderPeerId,
-                null,
-                {
-                    metadata: {
-                        pass: accessToken
-                    }
-                }
-            );
-
-
-        /*
-         * ========================================================
-         * 5. SENDER'IN STREAM'İ GELDİĞİNDE
-         * ========================================================
-         */
-        call.on("stream", (remoteStream) => {
-
-            document.getElementById("status").textContent =
-                "Yayın bağlandı.";
-
-
-            /*
-             * WebRTC'den gelen MediaStream'i
-             * video elementine veriyoruz.
-             */
-            const video =
-                document.getElementById("remoteVideo");
-
-            video.srcObject = remoteStream;
-
-
-            /*
-             * Bazı browser'larda autoplay davranışını
-             * manuel olarak tetiklemek gerekebilir.
-             */
-            video.play().catch((error) => {
-
-                console.log(
-                    "Video autoplay engellendi:",
-                    error
-                );
-
-            });
-
-        });
-
-
-        /*
-         * Sender bağlantıyı kapatırsa.
-         */
-        call.on("close", () => {
-
-            document.getElementById("status").textContent =
-                "Yayın sona erdi.";
-
-            document.getElementById("remoteVideo").srcObject =
-                null;
-        });
-
-
-        /*
-         * WebRTC hatası.
-         */
-        call.on("error", (error) => {
-
-            console.error(error);
-
-            document.getElementById("status").textContent =
-                "WebRTC bağlantı hatası.";
-        });
-
-    });
-
-
-    /*
-     * PeerJS bağlantı hataları.
-     */
-    peer.on("error", (error) => {
-
-        console.error("PeerJS Error:", error);
-
-        document.getElementById("status").textContent =
-            "PeerJS hatası: " + error.type;
-    });
-
-
+peer.on('error', (err) => {
+  log('Peer hatası: ' + err.type);
+  document.getElementById('status').textContent = '❌ Hata: ' + err.type;
+});
 </script>
-
-
 </body>
 </html>
