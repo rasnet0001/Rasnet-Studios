@@ -1,518 +1,215 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Screen Sender</title>
-
-    <!--
-        PeerJS'i CDN üzerinden yüklüyoruz.
-
-        PeerJS:
-        - Peer ID oluşturuyor
-        - Signaling işlemini yapıyor
-        - WebRTC bağlantısını bizim için yönetiyor
-    -->
-    <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: white;
-            padding: 30px;
-        }
-
-        .box {
-            max-width: 700px;
-            margin: auto;
-            background: #1d1d1d;
-            padding: 25px;
-            border-radius: 12px;
-        }
-
-        button,
-        select {
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 6px;
-            border: none;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        #shareButton {
-            background: #2d8cff;
-            color: white;
-        }
-
-        #link {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        #status {
-            margin-top: 15px;
-            color: #8ee68e;
-        }
-
-        video {
-            width: 100%;
-            margin-top: 20px;
-            background: black;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ekran Paylaşımı - Gönderici</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 700px; margin: 30px auto; padding: 0 16px; background:#111; color:#eee; }
+  h1 { font-size: 20px; }
+  input[type=text] { width: 100%; padding: 8px; box-sizing: border-box; background:#222; color:#eee; border:1px solid #444; border-radius:4px; }
+  button { padding: 8px 14px; margin: 6px 6px 6px 0; border-radius:4px; border:1px solid #444; background:#2563eb; color:#fff; cursor:pointer; }
+  button:disabled { background:#555; cursor:not-allowed; }
+  select { padding:6px; background:#222; color:#eee; border:1px solid #444; border-radius:4px; }
+  #linkBox, #controls { margin-top:16px; padding:12px; background:#1b1b1b; border-radius:8px; }
+  video { border-radius:8px; margin-top:12px; background:#000; }
+  #log { margin-top:16px; font-size:12px; color:#999; max-height:160px; overflow-y:auto; }
+  label { margin-right:12px; }
+</style>
 </head>
-
 <body>
 
-<div class="box">
+<h1>📡 Gönderici (Sender)</h1>
+<div id="status">Bağlanıyor...</div>
 
-    <h1>Screen Sender</h1>
-
-    <p>
-        Peer ID:
-        <strong id="peerId">Bağlanıyor...</strong>
-    </p>
-
-    <p>
-        Receiver Link:
-    </p>
-
-    <input id="link" readonly>
-
-    <hr>
-
-    <h3>Yayın Ayarları</h3>
-
-    <label>
-        Çözünürlük:
-    </label>
-
-    <select id="quality">
-        <option value="720">720p</option>
-        <option value="1080">1080p</option>
-        <option value="1440">1440p / 2K</option>
-        <option value="2160">2160p / 4K</option>
-    </select>
-
-    <br>
-
-    <label>
-        FPS:
-    </label>
-
-    <select id="fps">
-        <option value="30">30 FPS</option>
-        <option value="60">60 FPS</option>
-    </select>
-
-    <br>
-
-    <button id="shareButton">
-        Ekran Paylaşımını Başlat
-    </button>
-
-    <p id="status">
-        PeerJS'e bağlanılıyor...
-    </p>
-
-    <!--
-        Sender kendi ekranını burada önizleyebilir.
-        Bu video remote'a gönderilen stream'in aynısını gösterir.
-    -->
-    <video id="preview" autoplay muted playsinline></video>
-
+<div id="linkBox" style="display:none">
+  <p>Bu linki alıcı ile paylaşın (id + şifre içinde gömülü):</p>
+  <input type="text" id="shareLink" readonly>
+  <button onclick="copyLink()">Linki Kopyala</button>
 </div>
 
+<div id="controls" style="display:none">
+  <label>Çözünürlük:
+    <select id="resolution">
+      <option value="1280x720">720p</option>
+      <option value="1920x1080" selected>1080p</option>
+      <option value="3840x2160">4K</option>
+    </select>
+  </label>
+  <label>FPS:
+    <select id="fps">
+      <option value="30" selected>30</option>
+      <option value="60">60</option>
+    </select>
+  </label>
+  <br>
+  <button id="shareBtn" onclick="startShare()">Ekranı Paylaş</button>
+  <button id="stopBtn" onclick="stopShare()" disabled>Paylaşımı Durdur</button>
+</div>
 
+<video id="preview" autoplay muted playsinline style="width:100%;max-width:640px;display:none"></video>
+<div id="log"></div>
+
+<!-- PeerJS: WebRTC sinyalleşmesini (signaling) bizim yerimize halleden kütüphane.
+     Kendi sinyalleşme sunucumuzu yazmamıza gerek kalmıyor, PeerJS'in ücretsiz
+     bulut sunucusunu (0.peerjs.com) kullanıyoruz. -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
+// ---- Durum değişkenleri ----
+let localStream = null;              // getDisplayMedia'dan gelen ekran akışı
+let activeCalls = [];                // aktif WebRTC call'ları (birden fazla receiver olabilir)
+let SECRET_PASS = null;              // tarayıcıda üretilen, kimseyle paylaşılmayan gizli şifre
+let pendingVerifiedReceivers = [];   // parolayı doğrulamış ama henüz aranmamış receiver id'leri
 
-    /*
-     * ============================================================
-     * 1. PEER OLUŞTUR
-     * ============================================================
-     *
-     * new Peer() dediğimizde PeerJS Cloud'a bağlanılır.
-     *
-     * PeerJS bize otomatik olarak benzersiz bir Peer ID verir.
-     *
-     * Örneğin:
-     *
-     *     abc123XYZ
-     *
-     * Receiver bu ID'yi kullanarak bize ulaşacak.
-     */
-    const peer = new Peer();
+function log(msg) {
+  const el = document.getElementById('log');
+  el.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
 
+// ---- Güvenli şifre üretimi ----
+// Math.random() kriptografik olarak güvenli değildir (tahmin edilebilir).
+// crypto.getRandomValues tarayıcının kendi güvenli rastgele sayı üretecini
+// kullanır. 16 byte = 128 bit entropi, brute-force ile bulunması pratikte
+// imkansız bir şifre üretir.
+function generateSecurePassword(byteLength = 16) {
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+  // base64url'e çeviriyoruz: + / = karakterleri URL'de sorun çıkarabilir,
+  // bu yüzden - _ ile değiştirip = dolgusunu kaldırıyoruz.
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
 
-    /*
-     * ============================================================
-     * 2. GİZLİ TOKEN OLUŞTUR
-     * ============================================================
-     *
-     * Burada normal Math.random() kullanmıyoruz.
-     *
-     * crypto.getRandomValues() browser'ın cryptographically
-     * secure random generator'ını kullanır.
-     *
-     * 32 byte = 256 bit rastgele veri.
-     *
-     * Bu token'ın tahmin edilmesi pratik olarak mümkün değildir.
-     */
-    function createSecureToken() {
+// ---- PeerJS bağlantısını başlat ----
+// new Peer() içine id vermezsek, PeerJS sunucusu bize otomatik benzersiz
+// bir id atar (biz kendimiz id üretmiyoruz, senaryoda istenen buydu).
+const peer = new Peer();
 
-        const bytes = new Uint8Array(32);
+peer.on('open', (id) => {
+  document.getElementById('status').textContent = '✅ Bağlandı. ID: ' + id;
 
-        crypto.getRandomValues(bytes);
+  SECRET_PASS = generateSecurePassword();
 
-        /*
-         * Uint8Array'i hexadecimal string'e çeviriyoruz.
-         *
-         * Örnek:
-         *
-         * a8f3c9...
-         */
-        return Array.from(bytes)
-            .map(byte => byte.toString(16).padStart(2, "0"))
-            .join("");
+  // Linki oluştur: receiver.html'in aynı klasörde olduğunu varsayıyoruz.
+  // id ve pass'i query parametresi olarak gömüyoruz, receiver bunları
+  // linkten parse edecek.
+  const receiverUrl = new URL('receiver.html', window.location.href);
+  receiverUrl.searchParams.set('id', id);
+  receiverUrl.searchParams.set('pass', SECRET_PASS);
+
+  document.getElementById('shareLink').value = receiverUrl.toString();
+  document.getElementById('linkBox').style.display = 'block';
+  document.getElementById('controls').style.display = 'block';
+  log('Peer ID alındı, şifre üretildi.');
+});
+
+peer.on('error', (err) => {
+  log('Peer hatası: ' + err.type);
+  document.getElementById('status').textContent = '❌ Hata: ' + err.type;
+});
+
+// ---- Receiver'dan gelen parola doğrulama bağlantısını dinle ----
+// Akış: receiver bize bir DataConnection açar ve {type:'auth', pass:'...'}
+// mesajı yollar. Biz kendi SECRET_PASS'imizle karşılaştırırız.
+// - Doğruysa: 'auth-ok' döneriz ve (ekran paylaşımı başlamışsa hemen,
+//   başlamamışsa startShare() çağrıldığında) o receiver'a WebRTC call açarız.
+// - Yanlışsa: 'auth-fail' döneriz ve bağlantıyı kapatırız; hiçbir zaman
+//   media call başlatılmaz, yani şifre yanlışsa ekran ASLA paylaşılmaz.
+peer.on('connection', (conn) => {
+  conn.on('open', () => log('Gelen bağlantı isteği: ' + conn.peer));
+
+  conn.on('data', (data) => {
+    if (!data || data.type !== 'auth') return;
+
+    if (data.pass === SECRET_PASS) {
+      log('Parola doğru: ' + conn.peer);
+      conn.send({ type: 'auth-ok' });
+
+      if (localStream) {
+        callReceiver(conn.peer);
+      } else {
+        // Ekran paylaşımı henüz başlamadıysa doğrulanmış receiver'ı
+        // bekletiyoruz, startShare() çalışınca otomatik aranacak.
+        pendingVerifiedReceivers.push(conn.peer);
+        log('Paylaşım henüz başlamadı, receiver bekleme listesine eklendi.');
+      }
+    } else {
+      log('Parola YANLIŞ, reddedildi: ' + conn.peer);
+      conn.send({ type: 'auth-fail' });
+      setTimeout(() => conn.close(), 200);
     }
+  });
+});
 
+function callReceiver(receiverId) {
+  if (!localStream) return;
+  const call = peer.call(receiverId, localStream);
+  activeCalls.push(call);
+  call.on('close', () => log('Bağlantı kapandı: ' + receiverId));
+  call.on('error', (e) => log('Call hatası: ' + e));
+  log('Yayın başlatıldı → ' + receiverId);
+}
 
-    /*
-     * Her sender sayfası açıldığında yeni bir token oluşturuyoruz.
-     */
-    const accessToken = createSecureToken();
+// ---- Ekran yakalama ----
+async function startShare() {
+  const [w, h] = document.getElementById('resolution').value.split('x').map(Number);
+  const fps = Number(document.getElementById('fps').value);
 
-
-    /*
-     * ============================================================
-     * 3. PEER AÇILDIĞINDA LINK OLUŞTUR
-     * ============================================================
-     *
-     * peer.id ancak "open" eventinden sonra hazır olur.
-     */
-    peer.on("open", (id) => {
-
-        document.getElementById("peerId").textContent = id;
-
-        /*
-         * Receiver sayfasının URL'sine:
-         *
-         * id   = sender'ın Peer ID'si
-         * pass = 256-bit secret
-         *
-         * koyuyoruz.
-         */
-        const receiverUrl =
-            new URL("receiver.html", window.location.href);
-
-        receiverUrl.searchParams.set("id", id);
-        receiverUrl.searchParams.set("pass", accessToken);
-
-        document.getElementById("link").value =
-            receiverUrl.toString();
-
-        document.getElementById("status").textContent =
-            "Hazır. Receiver bağlantısı bekleniyor.";
+  try {
+    // ideal değerler tarayıcıya bir "hedef" olarak veriliyor; donanım/tarayıcı
+    // desteklemezse otomatik daha düşük bir değere düşebilir, bu normaldir.
+    localStream = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        width: { ideal: w },
+        height: { ideal: h },
+        frameRate: { ideal: fps, max: fps }
+      },
+      audio: false
     });
 
-
-    /*
-     * ============================================================
-     * 4. GELEN WEBRTC ÇAĞRILARINI DİNLE
-     * ============================================================
-     *
-     * Receiver:
-     *
-     * peer.call(senderId, ...)
-     *
-     * yaptığında bu event tetiklenir.
-     */
-    peer.on("call", (call) => {
-
-        document.getElementById("status").textContent =
-            "Bir bağlantı isteği geldi. Token kontrol ediliyor...";
-
-
-        /*
-         * Receiver'ın gönderdiği metadata'yı alıyoruz.
-         *
-         * Receiver tarafında:
-         *
-         * {
-         *     pass: "..."
-         * }
-         *
-         * gönderilecek.
-         */
-        const receivedToken =
-            call.metadata?.pass;
-
-
-        /*
-         * ========================================================
-         * 5. TOKEN KONTROLÜ
-         * ========================================================
-         *
-         * Token eşleşmiyorsa:
-         *
-         * - answer() çağırmıyoruz
-         * - WebRTC bağlantısı kurulmuyor
-         * - ekran stream'i gönderilmiyor
-         */
-        if (
-            typeof receivedToken !== "string" ||
-            receivedToken !== accessToken
-        ) {
-
-            document.getElementById("status").textContent =
-                "Reddedildi: geçersiz erişim anahtarı.";
-
-            /*
-             * Çağrıyı kapatıyoruz.
-             */
-            call.close();
-
-            return;
-        }
-
-
-        /*
-         * Token doğru.
-         *
-         * Ancak burada henüz ekran paylaşımı başlatmak
-         * zorunda değiliz.
-         *
-         * Önce kullanıcıdan ekran izni alınmasını bekleyebiliriz.
-         */
-        if (!screenStream) {
-
-            document.getElementById("status").textContent =
-                "Bağlantı doğrulandı. Önce ekran paylaşımını başlat.";
-
-            /*
-             * Bu çağrıyı şimdilik bekletiyoruz.
-             *
-             * Kullanıcı Screen Share butonuna bastığında
-             * pendingCall üzerinden cevap vereceğiz.
-             */
-            pendingCall = call;
-
-            return;
-        }
-
-
-        /*
-         * Zaten ekran stream'i varsa direkt cevap ver.
-         */
-        acceptCall(call);
-    });
-
-
-    /*
-     * Şu anda aktif ekran stream'i.
-     */
-    let screenStream = null;
-
-
-    /*
-     * Doğrulanmış fakat ekran paylaşımı henüz başlamadığı
-     * için bekletilen WebRTC çağrısı.
-     */
-    let pendingCall = null;
-
-
-    /*
-     * ============================================================
-     * 6. WEBRTC ÇAĞRISINI KABUL ET
-     * ============================================================
-     */
-    function acceptCall(call) {
-
-        /*
-         * Receiver bize bir stream göndermiyor.
-         *
-         * Bu yüzden answer() içine bizim ekran stream'imizi
-         * veriyoruz.
-         *
-         * Böylece bağlantı tek yönlü:
-         *
-         * Sender -> Receiver
-         */
-        call.answer(screenStream);
-
-
-        document.getElementById("status").textContent =
-            "Receiver'a ekran gönderiliyor.";
-
-
-        /*
-         * Bağlantı kapandığında durum bilgisini güncelle.
-         */
-        call.on("close", () => {
-
-            document.getElementById("status").textContent =
-                "Receiver bağlantısı kapattı.";
-        });
-
-
-        call.on("error", (error) => {
-
-            console.error(error);
-
-            document.getElementById("status").textContent =
-                "WebRTC hatası.";
-        });
-    }
-
-
-    /*
-     * ============================================================
-     * 7. EKRAN PAYLAŞIMINI BAŞLAT
-     * ============================================================
-     */
-    document
-        .getElementById("shareButton")
-        .addEventListener("click", async () => {
-
-            try {
-
-                /*
-                 * Kullanıcının seçtiği kaliteyi alıyoruz.
-                 */
-                const quality =
-                    Number(
-                        document.getElementById("quality").value
-                    );
-
-
-                /*
-                 * Kullanıcının seçtiği FPS.
-                 */
-                const fps =
-                    Number(
-                        document.getElementById("fps").value
-                    );
-
-
-                /*
-                 * ====================================================
-                 * getDisplayMedia
-                 * ====================================================
-                 *
-                 * Browser ekran paylaşım penceresini açar.
-                 *
-                 * width / height / frameRate değerleri burada
-                 * istediğimiz kaliteyi browser'a bildirir.
-                 *
-                 * Browser'ın ekranı / işletim sistemi / tarayıcı
-                 * kısıtlamaları nedeniyle gerçek değer her zaman
-                 * tam olarak bu olmayabilir.
-                 */
-                screenStream =
-                    await navigator.mediaDevices.getDisplayMedia({
-
-                        video: {
-
-                            width: {
-                                ideal: quality
-                            },
-
-                            height: {
-                                ideal: quality * 9 / 16
-                            },
-
-                            frameRate: {
-                                ideal: fps,
-                                max: fps
-                            }
-                        },
-
-                        /*
-                         * Biz sadece ekran görüntüsü istiyoruz.
-                         *
-                         * Mikrofon veya sistem sesi istemiyoruz.
-                         */
-                        audio: false
-                    });
-
-
-                /*
-                 * Sender'ın kendi önizlemesini başlat.
-                 */
-                const preview =
-                    document.getElementById("preview");
-
-                preview.srcObject = screenStream;
-
-
-                document.getElementById("status").textContent =
-                    "Ekran paylaşımı başladı.";
-
-
-                /*
-                 * ====================================================
-                 * BEKLEYEN WEBRTC ÇAĞRISI VARSA CEVAPLA
-                 * ====================================================
-                 */
-                if (pendingCall) {
-
-                    const call = pendingCall;
-
-                    pendingCall = null;
-
-                    acceptCall(call);
-                }
-
-
-                /*
-                 * Kullanıcı browser'ın kendi ekran paylaşım
-                 * penceresinden "Stop Sharing" yaparsa bu event
-                 * tetiklenir.
-                 */
-                const videoTrack =
-                    screenStream.getVideoTracks()[0];
-
-                videoTrack.addEventListener("ended", () => {
-
-                    document.getElementById("status").textContent =
-                        "Ekran paylaşımı durduruldu.";
-
-                    screenStream = null;
-                });
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                document.getElementById("status").textContent =
-                    "Ekran paylaşımı başlatılamadı: " +
-                    error.message;
-            }
-        });
-
-
-    /*
-     * ============================================================
-     * PEERJS HATALARI
-     * ============================================================
-     */
-    peer.on("error", (error) => {
-
-        console.error("PeerJS Error:", error);
-
-        document.getElementById("status").textContent =
-            "PeerJS hatası: " + error.type;
-    });
-
+    const preview = document.getElementById('preview');
+    preview.srcObject = localStream;
+    preview.style.display = 'block';
+
+    document.getElementById('shareBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+    log(`Ekran paylaşımı başladı (${w}x${h} @ ${fps}fps)`);
+
+    // Kullanıcı tarayıcının kendi "paylaşımı durdur" arayüzünden durdurursa
+    // video track 'ended' event'i fırlatır, biz de temizliği tetikleriz.
+    localStream.getVideoTracks()[0].addEventListener('ended', stopShare);
+
+    // Daha önce doğrulanmış ama bekletilen receiver'lar varsa şimdi ara.
+    pendingVerifiedReceivers.forEach(callReceiver);
+    pendingVerifiedReceivers = [];
+
+  } catch (err) {
+    log('Ekran paylaşımı başlatılamadı: ' + err.message);
+  }
+}
+
+function stopShare() {
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+  }
+  activeCalls.forEach(c => c.close());
+  activeCalls = [];
+  document.getElementById('preview').style.display = 'none';
+  document.getElementById('shareBtn').disabled = false;
+  document.getElementById('stopBtn').disabled = true;
+  log('Ekran paylaşımı durduruldu.');
+}
+
+function copyLink() {
+  const input = document.getElementById('shareLink');
+  input.select();
+  navigator.clipboard.writeText(input.value);
+  log('Link kopyalandı.');
+}
 </script>
-
 </body>
 </html>
