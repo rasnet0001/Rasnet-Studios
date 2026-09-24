@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Privacy — Stream Sultan</title>
+
+    <meta
+        name="description"
+        content="Learn how Stream Sultan handles screen sharing, stream sessions, connections, links and privacy."
+    >
+
+    <meta name="theme-color" content="#07080d">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #07080d;
+            color: #f5f7ff;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1120px, calc(100% - 40px));
+            margin: auto;
+        }
+
+        /* =====================================
+           BACKGROUND
+        ===================================== */
+
+        .background-grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -3;
+
+            background-image:
+                linear-gradient(
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.018) 1px,
+                    transparent 1px
+                );
+
+            background-size: 70px 70px;
+
+            mask-image: linear-gradient(
+                to bottom,
+                black,
+                transparent 80%
+            );
+        }
+
+        .glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(130px);
+            pointer-events: none;
+            z-index: -2;
+            opacity: .14;
+        }
+
+        .glow.one {
+            top: -180px;
+            left: -180px;
+            background: #7055ff;
+        }
+
+        .glow.two {
+            right: -250px;
+            top: 500px;
+            background: #347aff;
+            opacity: .08;
+        }
+
+        /* =====================================
+           NAVIGATION
+        ===================================== */
+
+        nav {
+            height: 76px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+
+            background: rgba(7,8,13,.76);
+            backdrop-filter: blur(20px);
+
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .nav-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-size: 19px;
+            font-weight: 850;
+            letter-spacing: -.04em;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #8065ff,
+                    #4c8cff
+                );
+
+            box-shadow:
+                0 8px 30px rgba(102,82,255,.35);
+
+            font-weight: 900;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            color: #8e95a8;
+            font-size: 13px;
+            transition: .25s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-cta {
+            padding: 11px 17px;
+            border-radius: 10px;
+
+            background: white;
+            color: #08090e !important;
+
+            font-weight: 750 !important;
+        }
+
+        /* =====================================
+           HERO
+        ===================================== */
+
+        .hero {
+            padding-top: 155px;
+            padding-bottom: 90px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            border-radius: 999px;
+
+            background: rgba(124,92,255,.07);
+            border: 1px solid rgba(124,92,255,.2);
+
+            color: #b7aaff;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .12em;
+        }
+
+        .eyebrow::before {
+            content: "";
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #8d78ff;
+
+            box-shadow:
+                0 0 15px #8d78ff;
+        }
+
+        .hero h1 {
+            max-width: 900px;
+            margin: 25px auto 0;
+
+            font-size: clamp(52px, 8vw, 88px);
+
+            line-height: .96;
+            letter-spacing: -.065em;
+
+            font-weight: 900;
+        }
+
+        .hero h1 span {
+            background:
+                linear-gradient(
+                    100deg,
+                    #ffffff,
+                    #a999ff,
+                    #79a8ff
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 680px;
+
+            margin: 25px auto 0;
+
+            color: #858c9f;
+
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        .last-updated {
+            margin-top: 22px;
+
+            color: #555c6e;
+
+            font-size: 12px;
+        }
+
+        /* =====================================
+           QUICK SUMMARY
+        ===================================== */
+
+        .summary {
+            margin-top: 20px;
+            margin-bottom: 90px;
+        }
+
+        .summary-card {
+            padding: 34px;
+
+            border-radius: 20px;
+
+            border: 1px solid rgba(124,92,255,.16);
+
+            background:
+                radial-gradient(
+                    circle at 90% 0%,
+                    rgba(124,92,255,.11),
+                    transparent 35%
+                ),
+                rgba(255,255,255,.025);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.22);
+        }
+
+        .summary-card h2 {
+            font-size: 22px;
+            letter-spacing: -.03em;
+        }
+
+        .summary-card > p {
+            margin-top: 10px;
+
+            color: #7d8497;
+
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .summary-grid {
+            margin-top: 28px;
+
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+
+            gap: 10px;
+        }
+
+        .summary-item {
+            padding: 18px;
+
+            border-radius: 13px;
+
+            background: rgba(255,255,255,.025);
+
+            border: 1px solid rgba(255,255,255,.06);
+        }
+
+        .summary-item strong {
+            display: block;
+
+            font-size: 14px;
+        }
+
+        .summary-item span {
+            display: block;
+
+            margin-top: 6px;
+
+            color: #70778a;
+
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        /* =====================================
+           CONTENT LAYOUT
+        ===================================== */
+
+        .content-layout {
+            display: grid;
+
+            grid-template-columns: 235px 1fr;
+
+            gap: 65px;
+
+            align-items: start;
+        }
+
+        /* =====================================
+           SIDEBAR
+        ===================================== */
+
+        .toc {
+            position: sticky;
+            top: 105px;
+        }
+
+        .toc-title {
+            color: #575e70;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .13em;
+
+            margin-bottom: 15px;
+        }
+
+        .toc a {
+            display: block;
+
+            padding: 9px 11px;
+
+            border-left: 1px solid rgba(255,255,255,.07);
+
+            color: #71788a;
+
+            font-size: 12px;
+
+            transition: .2s;
+        }
+
+        .toc a:hover {
+            color: white;
+
+            border-left-color: #8065ff;
+
+            background: rgba(124,92,255,.04);
+        }
+
+        /* =====================================
+           ARTICLE
+        ===================================== */
+
+        .article {
+            max-width: 760px;
+        }
+
+        .article-section {
+            padding-bottom: 65px;
+            margin-bottom: 65px;
+
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .article-section:last-child {
+            border-bottom: 0;
+        }
+
+        .article h2 {
+            font-size: 30px;
+            letter-spacing: -.04em;
+        }
+
+        .article h3 {
+            margin-top: 32px;
+
+            font-size: 18px;
+            letter-spacing: -.025em;
+        }
+
+        .article p {
+            margin-top: 16px;
+
+            color: #81889b;
+
+            font-size: 14px;
+            line-height: 1.85;
+        }
+
+        .article ul {
+            margin-top: 17px;
+
+            padding-left: 21px;
+        }
+
+        .article li {
+            margin-top: 10px;
+
+            color: #81889b;
+
+            font-size: 14px;
+            line-height: 1.75;
+        }
+
+        .article li::marker {
+            color: #8875ff;
+        }
+
+        /* =====================================
+           INFO CARDS
+        ===================================== */
+
+        .info-card {
+            margin-top: 25px;
+
+            padding: 24px;
+
+            border-radius: 15px;
+
+            border: 1px solid rgba(255,255,255,.07);
+
+            background: rgba(255,255,255,.025);
+        }
+
+        .info-card strong {
+            display: block;
+
+            color: #e7e9f0;
+
+            font-size: 14px;
+        }
+
+        .info-card p {
+            margin-top: 8px;
+
+            font-size: 13px;
+        }
+
+        .notice {
+            margin-top: 25px;
+
+            padding: 22px 24px;
+
+            border-radius: 14px;
+
+            background: rgba(124,92,255,.055);
+
+            border: 1px solid rgba(124,92,255,.13);
+
+            color: #878ea1;
+
+            font-size: 13px;
+
+            line-height: 1.75;
+        }
+
+        .notice strong {
+            color: #c5bbff;
+        }
+
+        /* =====================================
+           FLOW
+        ===================================== */
+
+        .privacy-flow {
+            margin-top: 30px;
+
+            display: grid;
+
+            grid-template-columns:
+                1fr
+                auto
+                1fr
+                auto
+                1fr;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .flow-node {
+            padding: 22px 15px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            border: 1px solid rgba(255,255,255,.07);
+
+            background: rgba(255,255,255,.025);
+        }
+
+        .flow-icon {
+            font-size: 22px;
+
+            color: #9d8cff;
+        }
+
+        .flow-node strong {
+            display: block;
+
+            margin-top: 9px;
+
+            font-size: 12px;
+        }
+
+        .flow-node span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #676e81;
+
+            font-size: 10px;
+        }
+
+        .flow-arrow {
+            color: #6553bf;
+
+            font-size: 20px;
+        }
+
+        /* =====================================
+           DATA TABLE
+        ===================================== */
+
+        .data-table {
+            margin-top: 28px;
+
+            border: 1px solid rgba(255,255,255,.07);
+
+            border-radius: 15px;
+
+            overflow: hidden;
+        }
+
+        .data-row {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .data-row:last-child {
+            border-bottom: 0;
+        }
+
+        .data-row > div {
+            padding: 17px 18px;
+
+            font-size: 13px;
+        }
+
+        .data-row > div:first-child {
+            color: #d9dce5;
+
+            font-weight: 650;
+        }
+
+        .data-row > div:last-child {
+            color: #747b8e;
+        }
+
+        .data-header {
+            background: rgba(255,255,255,.035);
+        }
+
+        .data-header > div {
+            color: #9ea5b7 !important;
+
+            font-size: 11px !important;
+
+            text-transform: uppercase;
+
+            letter-spacing: .08em;
+        }
+
+        /* =====================================
+           SECURITY GRID
+        ===================================== */
+
+        .security-grid {
+            margin-top: 28px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+        }
+
+        .security-card {
+            padding: 23px;
+
+            border-radius: 15px;
+
+            border: 1px solid rgba(255,255,255,.07);
+
+            background: rgba(255,255,255,.025);
+        }
+
+        .security-card .icon {
+            color: #8f7cff;
+
+            font-size: 19px;
+        }
+
+        .security-card h4 {
+            margin-top: 15px;
+
+            font-size: 14px;
+        }
+
+        .security-card p {
+            margin-top: 8px;
+
+            font-size: 12px;
+
+            line-height: 1.65;
+        }
+
+        /* =====================================
+           CTA
+        ===================================== */
+
+        .bottom-cta {
+            margin-top: 30px;
+
+            padding: 45px;
+
+            text-align: center;
+
+            border-radius: 21px;
+
+            border: 1px solid rgba(124,92,255,.14);
+
+            background:
+                radial-gradient(
+                    circle at 50% 100%,
+                    rgba(124,92,255,.11),
+                    transparent 45%
+                ),
+                rgba(255,255,255,.02);
+        }
+
+        .bottom-cta h2 {
+            font-size: 30px;
+
+            letter-spacing: -.04em;
+        }
+
+        .bottom-cta p {
+            max-width: 530px;
+
+            margin: 13px auto 0;
+
+            color: #777e91;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+        .cta-button {
+            display: inline-flex;
+
+            margin-top: 23px;
+
+            padding: 13px 21px;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #8065ff,
+                    #5c84ff
+                );
+
+            box-shadow:
+                0 14px 35px rgba(105,83,255,.25);
+
+            font-size: 13px;
+            font-weight: 750;
+
+            transition: .25s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 18px 45px rgba(105,83,255,.38);
+        }
+
+        /* =====================================
+           FOOTER
+        ===================================== */
+
+        footer {
+            margin-top: 120px;
+
+            padding: 60px 0 30px;
+
+            border-top: 1px solid rgba(255,255,255,.06);
+
+            background: #05060a;
+        }
+
+        .footer-grid {
+            display: grid;
+
+            grid-template-columns: 1.6fr 1fr 1fr 1fr;
+
+            gap: 40px;
+        }
+
+        .footer-description {
+            max-width: 300px;
+
+            margin-top: 15px;
+
+            color: #656c7e;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+        }
+
+        .footer-column h4 {
+            color: #dce0e8;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: .1em;
+        }
+
+        .footer-column a {
+            display: block;
+
+            margin-top: 13px;
+
+            color: #62697b;
+
+            font-size: 12px;
+
+            transition: .2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            margin-top: 55px;
+
+            padding-top: 23px;
+
+            border-top: 1px solid rgba(255,255,255,.05);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #4e5566;
+
+            font-size: 11px;
+        }
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 850px) {
+
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .toc {
+                display: none;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .privacy-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+
+                text-align: center;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: min(100% - 28px, 1120px);
+            }
+
+            .nav-links a:not(.nav-cta) {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 125px;
+            }
+
+            .hero h1 {
+                font-size: 52px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .summary-card {
+                padding: 25px;
+            }
+
+            .article h2 {
+                font-size: 27px;
+            }
+
+            .data-row {
+                grid-template-columns: 1fr;
+            }
+
+            .data-row > div:last-child {
+                padding-top: 0;
+            }
+
+            .bottom-cta {
+                padding: 32px 22px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-brand {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background-grid"></div>
+
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <div class="container nav-inner">
+
+            <a href="index.html" class="brand">
+
+                <div class="brand-mark">
+                    S
+                </div>
+
+                <span>
+                    Stream Sultan
+                </span>
+
+            </a>
+
+
+            <div class="nav-links">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#features">
+                    Features
+                </a>
+
+                <a href="how-to.html">
+                    How It Works
+                </a>
+
+                <a href="faq.html">
+                    FAQ
+                </a>
+
+                <a href="sender.html" class="nav-cta">
+                    Start Streaming
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="container">
+
+                <div class="eyebrow">
+                    Privacy at Stream Sultan
+                </div>
+
+                <h1>
+                    Your screen is yours.
+                    <span>Keep it that way.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Stream Sultan is designed for temporary, real-time
+                    screen sharing. No account is required, streams are not
+                    designed to become permanent recordings, and connections
+                    are established for active streaming sessions.
+                </p>
+
+                <div class="last-updated">
+                    Last updated: September 2026
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             QUICK SUMMARY
+        ========================== -->
+
+        <section class="summary">
+
+            <div class="container">
+
+                <div class="summary-card">
+
+                    <h2>
+                        The short version
+                    </h2>
+
+                    <p>
+                        If you only have a few seconds, these are the
+                        important things to know about privacy on
+                        Stream Sultan.
+                    </p>
+
+
+                    <div class="summary-grid">
+
+                        <div class="summary-item">
+
+                            <strong>
+                                No user accounts
+                            </strong>
+
+                            <span>
+                                Stream Sultan does not require registration
+                                or login to start or watch a stream.
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <strong>
+                                Live sessions
+                            </strong>
+
+                            <span>
+                                Streams are intended for live viewing rather
+                                than permanent video hosting.
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <strong>
+                                Peer-to-peer delivery
+                            </strong>
+
+                            <span>
+                                Viewer connections use WebRTC peer-to-peer
+                                streaming technology.
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <strong>
+                                You choose what to share
+                            </strong>
+
+                            <span>
+                                Your browser asks you to select the screen,
+                                window or display you want to share.
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <strong>
+                                Temporary links
+                            </strong>
+
+                            <span>
+                                A stream session uses a generated link.
+                                Starting a new session creates a new
+                                connection.
+                            </span>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <strong>
+                                No video library
+                            </strong>
+
+                            <span>
+                                Stream Sultan does not provide a library
+                                where your previous streams can be replayed.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CONTENT
+        ========================== -->
+
+        <section class="container">
+
+            <div class="content-layout">
+
+
+                <!-- TABLE OF CONTENTS -->
+
+                <aside class="toc">
+
+                    <div class="toc-title">
+                        On this page
+                    </div>
+
+                    <a href="#overview">
+                        Privacy Overview
+                    </a>
+
+                    <a href="#accounts">
+                        Accounts & Identity
+                    </a>
+
+                    <a href="#screen-sharing">
+                        Screen Sharing
+                    </a>
+
+                    <a href="#connections">
+                        Connections
+                    </a>
+
+                    <a href="#links">
+                        Stream Links
+                    </a>
+
+                    <a href="#recording">
+                        Recording & Storage
+                    </a>
+
+                    <a href="#data">
+                        Data & Information
+                    </a>
+
+                    <a href="#browser">
+                        Browser Permissions
+                    </a>
+
+                    <a href="#security">
+                        Security
+                    </a>
+
+                    <a href="#third-party">
+                        Third-Party Services
+                    </a>
+
+                    <a href="#changes">
+                        Changes
+                    </a>
+
+                </aside>
+
+
+                <!-- ARTICLE -->
+
+                <article class="article">
+
+
+                    <!-- OVERVIEW -->
+
+                    <section class="article-section" id="overview">
+
+                        <h2>
+                            01. Privacy Overview
+                        </h2>
+
+                        <p>
+                            Stream Sultan is a browser-based screen sharing
+                            service built around a simple idea: start a live
+                            session, share the generated link and let other
+                            people watch.
+                        </p>
+
+                        <p>
+                            Because the service does not use a traditional
+                            account system, there is no user profile that
+                            needs to be created before you can start
+                            streaming.
+                        </p>
+
+                        <p>
+                            Stream Sultan also does not operate as a
+                            traditional video hosting platform. A stream is
+                            a live session rather than a video uploaded to a
+                            personal media library.
+                        </p>
+
+                        <div class="notice">
+                            <strong>Important:</strong>
+                            Privacy on the web also depends on your browser,
+                            operating system, network provider and the people
+                            you choose to share your stream with. Stream
+                            Sultan cannot control what a viewer does with
+                            content they can see on their own device.
+                        </div>
+
+                    </section>
+
+
+                    <!-- ACCOUNTS -->
+
+                    <section class="article-section" id="accounts">
+
+                        <h2>
+                            02. Accounts & Identity
+                        </h2>
+
+                        <p>
+                            Stream Sultan currently does not have a
+                            registration or login system.
+                        </p>
+
+                        <p>
+                            This means you do not need to provide an account
+                            name, profile, password or other account details
+                            simply to start a stream.
+                        </p>
+
+                        <h3>
+                            No profile, no account dashboard
+                        </h3>
+
+                        <p>
+                            Stream Sultan does not provide user profiles,
+                            follower systems, public channels or a personal
+                            streaming dashboard.
+                        </p>
+
+                        <p>
+                            The service is intentionally centered around
+                            individual streaming sessions rather than
+                            permanent identities.
+                        </p>
+
+                    </section>
+
+
+                    <!-- SCREEN SHARING -->
+
+                    <section class="article-section" id="screen-sharing">
+
+                        <h2>
+                            03. What happens when you share your screen?
+                        </h2>
+
+                        <p>
+                            When you start a stream, your browser's screen
+                            sharing functionality asks you what you want to
+                            share.
+                        </p>
+
+                        <p>
+                            Depending on your browser and operating system,
+                            this may include an entire display, a specific
+                            application window or another supported sharing
+                            source.
+                        </p>
+
+                        <div class="info-card">
+
+                            <strong>
+                                You make the selection.
+                            </strong>
+
+                            <p>
+                                Stream Sultan does not automatically decide
+                                which part of your screen should be shared.
+                                You interact with your browser's screen
+                                sharing interface and select the content
+                                you want to broadcast.
+                            </p>
+
+                        </div>
+
+                        <h3>
+                            Screen and system audio
+                        </h3>
+
+                        <p>
+                            When supported by the browser and the selected
+                            capture source, system audio can be included
+                            alongside the screen stream.
+                        </p>
+
+                    </section>
+
+
+                    <!-- CONNECTIONS -->
+
+                    <section class="article-section" id="connections">
+
+                        <h2>
+                            04. How streaming connections work
+                        </h2>
+
+                        <p>
+                            Stream Sultan uses PeerJS together with WebRTC
+                            technology to establish real-time connections
+                            between the broadcaster and viewers.
+                        </p>
+
+                        <p>
+                            Conceptually, an active session looks like this:
+                        </p>
+
+
+                        <div class="privacy-flow">
+
+                            <div class="flow-node">
+
+                                <div class="flow-icon">
+                                    ▣
+                                </div>
+
+                                <strong>
+                                    Your Browser
+                                </strong>
+
+                                <span>
+                                    Screen capture
+                                </span>
+
+                            </div>
+
+
+                            <div class="flow-arrow">
+                                →
+                            </div>
+
+
+                            <div class="flow-node">
+
+                                <div class="flow-icon">
+                                    ⌁
+                                </div>
+
+                                <strong>
+                                    WebRTC
+                                </strong>
+
+                                <span>
+                                    Live connection
+                                </span>
+
+                            </div>
+
+
+                            <div class="flow-arrow">
+                                →
+                            </div>
+
+
+                            <div class="flow-node">
+
+                                <div class="flow-icon">
+                                    ◉
+                                </div>
+
+                                <strong>
+                                    Viewer
+                                </strong>
+
+                                <span>
+                                    Live playback
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <p>
+                            The exact network path used by WebRTC can depend
+                            on network conditions and browser networking
+                            behavior. Stream Sultan's application layer is
+                            built around establishing the live connection
+                            required for the active session.
+                        </p>
+
+                    </section>
+
+
+                    <!-- LINKS -->
+
+                    <section class="article-section" id="links">
+
+                        <h2>
+                            05. Stream Links
+                        </h2>
+
+                        <p>
+                            When a broadcaster starts a session, Stream
+                            Sultan generates a unique viewing link for that
+                            session.
+                        </p>
+
+                        <p>
+                            The link contains information required by the
+                            viewer page to connect to the corresponding
+                            active session.
+                        </p>
+
+                        <div class="notice">
+                            <strong>Keep your stream link private when
+                            necessary.</strong>
+                            Anyone who obtains the active viewing link may
+                            potentially be able to attempt to connect to the
+                            stream. Only share it with people you trust.
+                        </div>
+
+                        <h3>
+                            What happens when a session ends?
+                        </h3>
+
+                        <p>
+                            The generated link is associated with the
+                            corresponding streaming session. If the
+                            broadcaster closes the session or needs to start
+                            again after a connection problem, a new session
+                            and connection can be created.
+                        </p>
+
+                        <p>
+                            This means you should treat each generated stream
+                            link as a temporary access link rather than a
+                            permanent channel address.
+                        </p>
+
+                    </section>
+
+
+                    <!-- RECORDING -->
+
+                    <section class="article-section" id="recording">
+
+                        <h2>
+                            06. Recording & Storage
+                        </h2>
+
+                        <p>
+                            Stream Sultan is designed for live screen
+                            sharing, not video recording or video-on-demand
+                            hosting.
+                        </p>
+
+                        <p>
+                            The service does not provide a stream archive,
+                            recording library or replay page where previous
+                            streams can be browsed.
+                        </p>
+
+                        <h3>
+                            No permanent stream library
+                        </h3>
+
+                        <p>
+                            Once an active streaming session ends, Stream
+                            Sultan does not provide a built-in way for a
+                            viewer to return later and replay that stream.
+                        </p>
+
+                        <div class="info-card">
+
+                            <strong>
+                                One important limitation
+                            </strong>
+
+                            <p>
+                                Stream Sultan cannot prevent a viewer from
+                                independently recording or capturing content
+                                that is displayed on their own device.
+                                Screen sharing technology cannot guarantee
+                                that a recipient will not make their own copy
+                                of something they can see.
+                            </p>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- DATA -->
+
+                    <section class="article-section" id="data">
+
+                        <h2>
+                            07. Data & Information
+                        </h2>
+
+                        <p>
+                            Stream Sultan's current design does not require
+                            the personal account information normally
+                            associated with streaming platforms.
+                        </p>
+
+                        <p>
+                            The following table describes the service at a
+                            high level. It should not be interpreted as a
+                            promise that no technical data can ever exist
+                            anywhere in the underlying infrastructure,
+                            browser or network.
+                        </p>
+
+
+                        <div class="data-table">
+
+                            <div class="data-row data-header">
+
+                                <div>
+                                    Category
+                                </div>
+
+                                <div>
+                                    Current behavior
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    User account
+                                </div>
+
+                                <div>
+                                    No account system
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    Login credentials
+                                </div>
+
+                                <div>
+                                    No login system
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    Stream recordings
+                                </div>
+
+                                <div>
+                                    No built-in recording library
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    Live stream
+                                </div>
+
+                                <div>
+                                    Real-time session
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    Viewer access
+                                </div>
+
+                                <div>
+                                    Generated stream link
+                                </div>
+
+                            </div>
+
+
+                            <div class="data-row">
+
+                                <div>
+                                    Video delivery
+                                </div>
+
+                                <div>
+                                    WebRTC-based streaming
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="notice">
+                            <strong>Technical information:</strong>
+                            Browsers and network infrastructure may
+                            necessarily process technical information such
+                            as network addresses, connection information or
+                            device-related data when communicating over the
+                            internet. Stream Sultan does not treat the
+                            absence of user accounts as meaning that the
+                            internet itself cannot expose technical
+                            information.
+                        </div>
+
+                    </section>
+
+
+                    <!-- BROWSER -->
+
+                    <section class="article-section" id="browser">
+
+                        <h2>
+                            08. Browser Permissions
+                        </h2>
+
+                        <p>
+                            Screen sharing is a browser-controlled feature.
+                            Your browser determines when permission is
+                            requested and what capture sources are available.
+                        </p>
+
+                        <p>
+                            Stream Sultan relies on these browser capabilities
+                            rather than secretly accessing your display.
+                        </p>
+
+                        <h3>
+                            You can stop sharing
+                        </h3>
+
+                        <p>
+                            You remain in control of the screen-sharing
+                            session through your browser and operating system.
+                            Stopping the capture ends the corresponding
+                            screen stream.
+                        </p>
+
+                        <h3>
+                            Browser compatibility matters
+                        </h3>
+
+                        <p>
+                            Available screen-sharing options, system-audio
+                            support, video constraints and WebRTC behavior
+                            can vary between browsers and operating systems.
+                        </p>
+
+                    </section>
+
+
+                    <!-- SECURITY -->
+
+                    <section class="article-section" id="security">
+
+                        <h2>
+                            09. Security
+                        </h2>
+
+                        <p>
+                            Stream Sultan uses modern browser networking
+                            technologies for real-time communication.
+                            However, no internet service can honestly
+                            guarantee absolute security under every possible
+                            network, browser, device or configuration.
+                        </p>
+
+
+                        <div class="security-grid">
+
+                            <div class="security-card">
+
+                                <div class="icon">
+                                    ⌁
+                                </div>
+
+                                <h4>
+                                    WebRTC Connections
+                                </h4>
+
+                                <p>
+                                    Live media delivery is built around
+                                    WebRTC connections between participants.
+                                </p>
+
+                            </div>
+
+
+                            <div class="security-card">
+
+                                <div class="icon">
+                                    🔗
+                                </div>
+
+                                <h4>
+                                    Session Links
+                                </h4>
+
+                                <p>
+                                    Viewing links are generated for individual
+                                    streaming sessions rather than permanent
+                                    public channels.
+                                </p>
+
+                            </div>
+
+
+                            <div class="security-card">
+
+                                <div class="icon">
+                                    ◉
+                                </div>
+
+                                <h4>
+                                    Browser Controlled Capture
+                                </h4>
+
+                                <p>
+                                    Screen capture is initiated through the
+                                    browser's screen-sharing mechanism.
+                                </p>
+
+                            </div>
+
+
+                            <div class="security-card">
+
+                                <div class="icon">
+                                    ×
+                                </div>
+
+                                <h4>
+                                    No Public Stream Directory
+                                </h4>
+
+                                <p>
+                                    Stream Sultan does not provide a public
+                                    directory listing active personal streams.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- THIRD PARTY -->
+
+                    <section class="article-section" id="third-party">
+
+                        <h2>
+                            10. Third-Party Services & Infrastructure
+                        </h2>
+
+                        <p>
+                            Stream Sultan currently uses browser-based
+                            technologies and PeerJS for establishing the
+                            communication required by the application.
+                        </p>
+
+                        <p>
+                            Browsers themselves are also independent software
+                            products with their own privacy policies,
+                            networking behavior and telemetry.
+                        </p>
+
+                        <p>
+                            Your internet service provider, operating system,
+                            browser and network infrastructure may therefore
+                            process technical information independently of
+                            Stream Sultan.
+                        </p>
+
+                        <div class="notice">
+                            <strong>Important:</strong>
+                            Third-party privacy practices are governed by
+                            those providers' own policies and are not
+                            controlled by Stream Sultan.
+                        </div>
+
+                    </section>
+
+
+                    <!-- CHANGES -->
+
+                    <section class="article-section" id="changes">
+
+                        <h2>
+                            11. Changes to This Privacy Page
+                        </h2>
+
+                        <p>
+                            Stream Sultan may evolve over time. Features such
+                            as accounts, additional media sources, analytics,
+                            new infrastructure or other functionality could
+                            change how information is processed in the future.
+                        </p>
+
+                        <p>
+                            If the service changes in a way that materially
+                            affects privacy, this page should be updated to
+                            describe the new behavior.
+                        </p>
+
+                        <p>
+                            The date shown at the top of this page indicates
+                            when this version of the privacy information was
+                            last reviewed.
+                        </p>
+
+                    </section>
+
+
+                    <!-- FINAL CTA -->
+
+                    <div class="bottom-cta">
+
+                        <h2>
+                            Ready to share?
+                        </h2>
+
+                        <p>
+                            Start a live screen-sharing session without
+                            creating an account. Choose your settings,
+                            share your screen and send the generated link.
+                        </p>
+
+                        <a href="sender.html" class="cta-button">
+                            Start Streaming →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="brand">
+
+                        <div class="brand-mark">
+                            S
+                        </div>
+
+                        <span>
+                            Stream Sultan
+                        </span>
+
+                    </a>
+
+                    <p class="footer-description">
+                        Simple, browser-based screen sharing for people who
+                        want to share their screen and let others watch.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Product
+                    </h4>
+
+                    <a href="sender.html">
+                        Start Streaming
+                    </a>
+
+                    <a href="index.html#features">
+                        Features
+                    </a>
+
+                    <a href="index.html#quality">
+                        Quality
+                    </a>
+
+                    <a href="how-to.html">
+                        How It Works
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Resources
+                    </h4>
+
+                    <a href="faq.html">
+                        FAQ
+                    </a>
+
+                    <a href="how-to.html">
+                        Getting Started
+                    </a>
+
+                    <a href="privacy.html">
+                        Privacy
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Stream Sultan
+                    </h4>
+
+                    <a href="index.html">
+                        Home
+                    </a>
+
+                    <a href="sender.html">
+                        Share Your Screen
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © 2026 Stream Sultan. All rights reserved.
+                </span>
+
+                <span>
+                    Privacy-first live screen sharing.
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
+</html>
