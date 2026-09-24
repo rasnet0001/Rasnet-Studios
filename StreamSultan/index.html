@@ -1,0 +1,2345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Stream Sultan — Share Your Screen. Instantly.</title>
+
+    <meta
+        name="description"
+        content="Stream Sultan lets you share your screen instantly in up to 4K at 60 FPS. No account. No installation. Just share your screen and send the link."
+    >
+
+    <meta name="theme-color" content="#07080d">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #07080d;
+            color: #f5f7ff;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        /* =========================
+           GLOBAL
+        ========================= */
+
+        .container {
+            width: min(1180px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid rgba(255,255,255,.1);
+            background: rgba(255,255,255,.035);
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: #aeb5ca;
+        }
+
+        .section-label::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #7c5cff;
+            box-shadow: 0 0 14px #7c5cff;
+        }
+
+        .section-title {
+            margin-top: 20px;
+            font-size: clamp(38px, 5vw, 64px);
+            line-height: 1.03;
+            letter-spacing: -.045em;
+        }
+
+        .section-description {
+            max-width: 650px;
+            margin-top: 20px;
+            color: #9299ae;
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        /* =========================
+           BACKGROUND
+        ========================= */
+
+        .ambient {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: .35;
+        }
+
+        .ambient.one {
+            width: 420px;
+            height: 420px;
+            background: #5c3cff;
+            top: 150px;
+            left: -180px;
+        }
+
+        .ambient.two {
+            width: 380px;
+            height: 380px;
+            background: #147dff;
+            right: -180px;
+            top: 500px;
+            opacity: .18;
+        }
+
+        .ambient.three {
+            width: 420px;
+            height: 420px;
+            background: #8b42ff;
+            left: 40%;
+            bottom: -200px;
+            opacity: .12;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            background: rgba(7,8,13,.72);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-inner {
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 19px;
+            font-weight: 850;
+            letter-spacing: -.04em;
+        }
+
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #8065ff, #4c8cff);
+            box-shadow: 0 8px 30px rgba(102,82,255,.35);
+            font-weight: 900;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #979db1;
+            font-size: 14px;
+            transition: .25s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-cta {
+            padding: 11px 17px;
+            border-radius: 10px;
+            background: white;
+            color: #08090e !important;
+            font-weight: 750;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(255,255,255,.12);
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            min-height: 100vh;
+            padding-top: 150px;
+            padding-bottom: 90px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+            background-size: 70px 70px;
+            mask-image: linear-gradient(to bottom, black, transparent 80%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 920px;
+            margin: auto;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 13px;
+            border-radius: 999px;
+            border: 1px solid rgba(124,92,255,.25);
+            background: rgba(124,92,255,.07);
+            color: #c4b9ff;
+            font-size: 13px;
+            font-weight: 650;
+            animation: fadeUp .8s ease both;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #72e6a3;
+            box-shadow: 0 0 12px #72e6a3;
+        }
+
+        .hero h1 {
+            margin-top: 28px;
+            font-size: clamp(54px, 8vw, 100px);
+            line-height: .94;
+            letter-spacing: -.065em;
+            font-weight: 900;
+            animation: fadeUp .8s .08s ease both;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(
+                100deg,
+                #ffffff 10%,
+                #a894ff 48%,
+                #71a5ff 90%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 670px;
+            margin: 30px auto 0;
+            color: #969db1;
+            font-size: 18px;
+            line-height: 1.75;
+            animation: fadeUp .8s .16s ease both;
+        }
+
+        .hero-buttons {
+            margin-top: 36px;
+            display: flex;
+            justify-content: center;
+            gap: 13px;
+            flex-wrap: wrap;
+            animation: fadeUp .8s .24s ease both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 50px;
+            padding: 0 22px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 750;
+            transition: .25s ease;
+            cursor: pointer;
+            border: 0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8065ff, #5c84ff);
+            color: white;
+            box-shadow: 0 15px 40px rgba(105,83,255,.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(105,83,255,.38);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.1);
+            color: #e9ebf3;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,.08);
+            transform: translateY(-2px);
+        }
+
+        .hero-note {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #656b7d;
+            animation: fadeUp .8s .3s ease both;
+        }
+
+        /* =========================
+           HERO MOCKUP
+        ========================= */
+
+        .hero-preview {
+            margin: 80px auto 0;
+            width: min(900px, 100%);
+            animation: fadeUp 1s .35s ease both;
+        }
+
+        .window {
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 18px;
+            background: rgba(13,15,23,.88);
+            box-shadow:
+                0 50px 120px rgba(0,0,0,.55),
+                0 0 80px rgba(100,75,255,.1);
+            overflow: hidden;
+        }
+
+        .window-top {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #353947;
+        }
+
+        .window-address {
+            margin: auto;
+            width: 50%;
+            height: 25px;
+            border-radius: 7px;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(255,255,255,.05);
+        }
+
+        .window-body {
+            min-height: 350px;
+            padding: 28px;
+            display: grid;
+            grid-template-columns: 1.6fr .7fr;
+            gap: 18px;
+        }
+
+        .preview-screen {
+            min-height: 290px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,.08);
+            background:
+                radial-gradient(circle at 65% 30%, rgba(116,90,255,.35), transparent 30%),
+                linear-gradient(135deg,#111525,#090b11);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-screen::before {
+            content: "";
+            position: absolute;
+            inset: 15%;
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 15px;
+            transform: rotate(-4deg);
+        }
+
+        .preview-center {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .preview-icon {
+            width: 58px;
+            height: 58px;
+            margin: auto;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: rgba(124,92,255,.18);
+            border: 1px solid rgba(124,92,255,.3);
+            color: #b9aaff;
+            font-size: 25px;
+        }
+
+        .preview-center strong {
+            display: block;
+            margin-top: 13px;
+            font-size: 14px;
+        }
+
+        .preview-center small {
+            display: block;
+            margin-top: 5px;
+            color: #71778a;
+        }
+
+        .preview-side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mini-card {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.025);
+        }
+
+        .mini-card-label {
+            color: #6f7587;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .mini-card-value {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .mini-card-value span {
+            color: #8d78ff;
+        }
+
+        /* =========================
+           TRUST BAR
+        ========================= */
+
+        .trust {
+            border-top: 1px solid rgba(255,255,255,.05);
+            border-bottom: 1px solid rgba(255,255,255,.05);
+            background: rgba(255,255,255,.015);
+        }
+
+        .trust-inner {
+            min-height: 105px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            color: #767d91;
+            font-size: 13px;
+        }
+
+        .trust-item strong {
+            display: block;
+            color: #dfe2eb;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        /* =========================
+           FEATURE GRID
+        ========================= */
+
+        .features-grid {
+            margin-top: 55px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .feature-card {
+            min-height: 250px;
+            padding: 27px;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 18px;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.045),
+                    rgba(255,255,255,.015)
+                );
+            transition: .3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(124,92,255,.28);
+            background: rgba(255,255,255,.055);
+        }
+
+        .feature-card::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -80px;
+            bottom: -80px;
+            background: #6e52ff;
+            filter: blur(70px);
+            opacity: .12;
+        }
+
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(124,92,255,.1);
+            border: 1px solid rgba(124,92,255,.17);
+            color: #ae9fff;
+            font-size: 19px;
+        }
+
+        .feature-card h3 {
+            margin-top: 25px;
+            font-size: 19px;
+            letter-spacing: -.025em;
+        }
+
+        .feature-card p {
+            margin-top: 11px;
+            color: #7e8598;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* =========================
+           QUALITY
+        ========================= */
+
+        .quality-section {
+            overflow: hidden;
+        }
+
+        .quality-layout {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: .8fr 1.2fr;
+            gap: 55px;
+            align-items: center;
+        }
+
+        .quality-copy h3 {
+            font-size: 32px;
+            letter-spacing: -.04em;
+        }
+
+        .quality-copy p {
+            margin-top: 16px;
+            color: #858c9f;
+            line-height: 1.8;
+        }
+
+        .quality-points {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quality-point {
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+        }
+
+        .check {
+            flex: 0 0 23px;
+            width: 23px;
+            height: 23px;
+            border-radius: 7px;
+            background: rgba(124,92,255,.12);
+            border: 1px solid rgba(124,92,255,.2);
+            display: grid;
+            place-items: center;
+            color: #a897ff;
+            font-size: 12px;
+        }
+
+        .quality-point div strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .quality-point div span {
+            display: block;
+            margin-top: 3px;
+            color: #6e7486;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .quality-panel {
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 20px;
+            background: rgba(255,255,255,.025);
+            box-shadow: 0 35px 90px rgba(0,0,0,.3);
+        }
+
+        .quality-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .quality-header strong {
+            font-size: 15px;
+        }
+
+        .live-badge {
+            color: #7fe4aa;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .quality-options {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 10px;
+        }
+
+        .quality-option {
+            padding: 18px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 12px;
+            background: rgba(255,255,255,.02);
+        }
+
+        .quality-option.active {
+            border-color: rgba(124,92,255,.5);
+            background: rgba(124,92,255,.09);
+            box-shadow: inset 0 0 30px rgba(124,92,255,.06);
+        }
+
+        .quality-option strong {
+            display: block;
+            font-size: 22px;
+        }
+
+        .quality-option span {
+            display: block;
+            margin-top: 6px;
+            color: #747b8e;
+            font-size: 11px;
+        }
+
+        .fps-row {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .fps {
+            flex: 1;
+            padding: 13px;
+            text-align: center;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.07);
+            color: #8b91a2;
+            font-size: 13px;
+        }
+
+        .fps.active {
+            color: white;
+            background: rgba(124,92,255,.1);
+            border-color: rgba(124,92,255,.3);
+        }
+
+        /* =========================
+           HOW IT WORKS
+        ========================= */
+
+        .steps {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            position: relative;
+        }
+
+        .step {
+            padding: 30px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.02);
+            position: relative;
+        }
+
+        .step-number {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: #151523;
+            border: 1px solid rgba(255,255,255,.09);
+            color: #a897ff;
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .step h3 {
+            margin-top: 25px;
+            font-size: 19px;
+        }
+
+        .step p {
+            margin-top: 10px;
+            color: #777e91;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           P2P
+        ========================= */
+
+        .p2p-card {
+            margin-top: 55px;
+            padding: 45px;
+            border-radius: 22px;
+            border: 1px solid rgba(124,92,255,.15);
+            background:
+                radial-gradient(
+                    circle at 80% 20%,
+                    rgba(104,79,255,.12),
+                    transparent 35%
+                ),
+                rgba(255,255,255,.02);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .p2p-card h3 {
+            font-size: 30px;
+            letter-spacing: -.04em;
+        }
+
+        .p2p-card p {
+            margin-top: 15px;
+            color: #82899b;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .connection-diagram {
+            min-height: 220px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .node {
+            width: 100px;
+            height: 100px;
+            border-radius: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #11131c;
+            border: 1px solid rgba(255,255,255,.09);
+            z-index: 2;
+        }
+
+        .node-icon {
+            font-size: 25px;
+            color: #a796ff;
+        }
+
+        .node span {
+            margin-top: 7px;
+            color: #7f8698;
+            font-size: 11px;
+        }
+
+        .connection-line {
+            height: 1px;
+            flex: 1;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                #755eff,
+                #7e9bff,
+                transparent
+            );
+            position: relative;
+        }
+
+        .connection-line::after {
+            content: "";
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #aa9aff;
+            top: -3px;
+            left: 30%;
+            box-shadow: 0 0 14px #8b76ff;
+            animation: travel 2s infinite linear;
+        }
+
+        /* =========================
+           USE CASES
+        ========================= */
+
+        .use-cases {
+            margin-top: 55px;
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 14px;
+        }
+
+        .use-case {
+            min-height: 190px;
+            padding: 23px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,.07);
+            background: rgba(255,255,255,.02);
+        }
+
+        .use-case-icon {
+            font-size: 20px;
+            color: #9d8cff;
+        }
+
+        .use-case h3 {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .use-case p {
+            margin-top: 8px;
+            color: #6f7688;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        /* =========================
+           PRIVACY
+        ========================= */
+
+        .privacy-box {
+            margin-top: 55px;
+            padding: 45px;
+            border-radius: 22px;
+            border: 1px solid rgba(111,222,167,.1);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(111,222,167,.04),
+                    rgba(255,255,255,.015)
+                );
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 25px;
+        }
+
+        .privacy-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            background: rgba(111,222,167,.08);
+            border: 1px solid rgba(111,222,167,.15);
+            color: #7be2a8;
+            font-size: 22px;
+        }
+
+        .privacy-box h3 {
+            font-size: 24px;
+        }
+
+        .privacy-box p {
+            margin-top: 10px;
+            color: #7e8698;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .privacy-link {
+            display: inline-block;
+            margin-top: 17px;
+            color: #9d8cff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* =========================
+           FAQ
+        ========================= */
+
+        .faq {
+            margin-top: 55px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        details {
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 13px;
+            background: rgba(255,255,255,.02);
+            overflow: hidden;
+        }
+
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: "+";
+            color: #777e91;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        details[open] summary::after {
+            content: "−";
+        }
+
+        details p {
+            padding: 0 20px 20px;
+            color: #747b8d;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           FINAL CTA
+        ========================= */
+
+        .final-cta {
+            padding: 125px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta::before {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 300px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            background: #6247ff;
+            filter: blur(150px);
+            opacity: .13;
+        }
+
+        .final-cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .final-cta h2 {
+            max-width: 800px;
+            margin: auto;
+            font-size: clamp(42px, 6vw, 74px);
+            line-height: 1;
+            letter-spacing: -.055em;
+        }
+
+        .final-cta p {
+            max-width: 580px;
+            margin: 22px auto 0;
+            color: #81889b;
+            line-height: 1.8;
+        }
+
+        .final-cta .hero-buttons {
+            margin-top: 30px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            border-top: 1px solid rgba(255,255,255,.06);
+            padding: 65px 0 30px;
+            background: #05060a;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-brand p {
+            max-width: 310px;
+            margin-top: 16px;
+            color: #666d80;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .footer-column h4 {
+            font-size: 12px;
+            color: #dce0ea;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .footer-column a {
+            display: block;
+            margin-top: 14px;
+            color: #686f82;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            margin-top: 60px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,.05);
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            color: #505667;
+            font-size: 12px;
+        }
+
+        /* =========================
+           ANIMATIONS
+        ========================= */
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes travel {
+            0% {
+                left: 15%;
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                left: 85%;
+                opacity: 0;
+            }
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .quality-layout,
+            .p2p-card {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: min(100% - 28px, 1180px);
+            }
+
+            .section {
+                padding: 85px 0;
+            }
+
+            .nav-links a:not(.nav-cta) {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 125px;
+            }
+
+            .hero h1 {
+                font-size: clamp(48px, 15vw, 75px);
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .hero-preview {
+                margin-top: 55px;
+            }
+
+            .window-body {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-screen {
+                min-height: 230px;
+            }
+
+            .preview-side {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .trust-inner {
+                padding: 25px 0;
+            }
+
+            .features-grid,
+            .steps,
+            .faq {
+                grid-template-columns: 1fr;
+            }
+
+            .quality-options {
+                grid-template-columns: 1fr;
+            }
+
+            .use-cases {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .p2p-card {
+                padding: 28px;
+            }
+
+            .privacy-box {
+                grid-template-columns: 1fr;
+                padding: 30px;
+            }
+
+            .connection-diagram {
+                min-height: 160px;
+            }
+
+            .node {
+                width: 75px;
+                height: 75px;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .footer-brand {
+                grid-column: 1 / -1;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            .use-cases {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-brand {
+                grid-column: auto;
+            }
+
+            .window-address {
+                width: 38%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+        <div class="container nav-inner">
+
+            <a href="index.html" class="brand">
+                <div class="brand-mark">S</div>
+                <span>Stream Sultan</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#quality">Quality</a>
+                <a href="faq.html">FAQ</a>
+                <a href="sender.html" class="nav-cta">Start Streaming</a>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-grid"></div>
+
+            <div class="ambient one"></div>
+            <div class="ambient two"></div>
+
+            <div class="container">
+
+                <div class="hero-content">
+
+                    <div class="status-pill">
+                        <span class="status-dot"></span>
+                        No account required
+                    </div>
+
+                    <h1>
+                        Share your screen.<br>
+                        <span>Instantly.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Stream Sultan makes screen sharing incredibly simple.
+                        Start a stream, choose your quality, copy your link,
+                        and send it to your friends. No downloads. No accounts.
+                        No complicated setup.
+                    </p>
+
+                    <div class="hero-buttons">
+
+                        <a href="sender.html" class="btn btn-primary">
+                            Start Sharing
+                            <span>→</span>
+                        </a>
+
+                        <a href="#how-it-works" class="btn btn-secondary">
+                            See How It Works
+                            <span>↓</span>
+                        </a>
+
+                    </div>
+
+                    <div class="hero-note">
+                        Free to use · Browser-based · Peer-to-peer
+                    </div>
+
+                </div>
+
+
+                <!-- Product Preview -->
+
+                <div class="hero-preview">
+
+                    <div class="window">
+
+                        <div class="window-top">
+
+                            <div class="window-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+
+                            <div class="window-address"></div>
+
+                        </div>
+
+                        <div class="window-body">
+
+                            <div class="preview-screen">
+
+                                <div class="preview-center">
+
+                                    <div class="preview-icon">▣</div>
+
+                                    <strong>Your screen, live.</strong>
+
+                                    <small>Ready to share</small>
+
+                                </div>
+
+                            </div>
+
+                            <div class="preview-side">
+
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Quality</div>
+                                    <div class="mini-card-value">
+                                        <span>4K</span>
+                                    </div>
+                                </div>
+
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Frame Rate</div>
+                                    <div class="mini-card-value">
+                                        <span>60</span> FPS
+                                    </div>
+                                </div>
+
+                                <div class="mini-card">
+                                    <div class="mini-card-label">Connection</div>
+                                    <div class="mini-card-value">
+                                        P2P
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             TRUST / QUICK INFO
+        ========================== -->
+
+        <section class="trust">
+
+            <div class="container trust-inner">
+
+                <div class="trust-item">
+                    <strong>Up to 4K</strong>
+                    High-resolution streaming
+                </div>
+
+                <div class="trust-item">
+                    <strong>Up to 60 FPS</strong>
+                    Smooth real-time video
+                </div>
+
+                <div class="trust-item">
+                    <strong>System Audio</strong>
+                    Share your screen and sound
+                </div>
+
+                <div class="trust-item">
+                    <strong>No Account</strong>
+                    Nothing to sign up for
+                </div>
+
+                <div class="trust-item">
+                    <strong>Peer-to-Peer</strong>
+                    Direct WebRTC connection
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FEATURES
+        ========================== -->
+
+        <section class="section" id="features">
+
+            <div class="ambient three"></div>
+
+            <div class="container">
+
+                <div class="section-label">
+                    Everything you need
+                </div>
+
+                <h2 class="section-title">
+                    Simple on the surface.<br>
+                    Powerful where it matters.
+                </h2>
+
+                <p class="section-description">
+                    Stream Sultan focuses on one thing: making it easy to share
+                    your screen with other people. Every feature is designed
+                    around that goal.
+                </p>
+
+
+                <div class="features-grid">
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">◉</div>
+
+                        <h3>Instant Screen Sharing</h3>
+
+                        <p>
+                            Start sharing your screen directly from your
+                            browser. There is no software to download and
+                            no complicated configuration.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">◆</div>
+
+                        <h3>4K Streaming</h3>
+
+                        <p>
+                            When your hardware and connection support it,
+                            Stream Sultan can deliver your screen in up to
+                            4K resolution.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">✦</div>
+
+                        <h3>30 or 60 FPS</h3>
+
+                        <p>
+                            Choose between 30 FPS for efficient streaming or
+                            60 FPS when you want a smoother viewing experience.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">♫</div>
+
+                        <h3>System Audio</h3>
+
+                        <p>
+                            Share your screen together with supported system
+                            audio so your viewers can hear what is happening
+                            on your screen.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">⌁</div>
+
+                        <h3>Peer-to-Peer</h3>
+
+                        <p>
+                            Streams are delivered through a direct WebRTC
+                            connection between the broadcaster and viewers.
+                        </p>
+
+                    </div>
+
+
+                    <div class="feature-card">
+
+                        <div class="feature-icon">∞</div>
+
+                        <h3>Multiple Viewers</h3>
+
+                        <p>
+                            More than one viewer can connect to the same
+                            active stream using the stream link generated
+                            for that session.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             QUALITY
+        ========================== -->
+
+        <section class="section quality-section" id="quality">
+
+            <div class="container">
+
+                <div class="section-label">
+                    Choose your experience
+                </div>
+
+                <h2 class="section-title">
+                    Your stream.<br>
+                    Your settings.
+                </h2>
+
+                <p class="section-description">
+                    Select the quality and frame rate that makes sense for
+                    your screen, hardware and network connection.
+                </p>
+
+
+                <div class="quality-layout">
+
+                    <div class="quality-copy">
+
+                        <h3>
+                            From everyday sharing to high-resolution streaming.
+                        </h3>
+
+                        <p>
+                            Stream Sultan gives the broadcaster control over
+                            the stream quality instead of forcing everyone
+                            into a single preset.
+                        </p>
+
+                        <div class="quality-points">
+
+                            <div class="quality-point">
+
+                                <div class="check">✓</div>
+
+                                <div>
+                                    <strong>720p</strong>
+                                    <span>
+                                        A practical choice for lighter
+                                        connections and everyday sharing.
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="quality-point">
+
+                                <div class="check">✓</div>
+
+                                <div>
+                                    <strong>1080p</strong>
+                                    <span>
+                                        Full HD quality for a sharp and
+                                        balanced viewing experience.
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="quality-point">
+
+                                <div class="check">✓</div>
+
+                                <div>
+                                    <strong>4K</strong>
+                                    <span>
+                                        High-resolution streaming when your
+                                        setup and connection can handle it.
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="quality-point">
+
+                                <div class="check">✓</div>
+
+                                <div>
+                                    <strong>30 / 60 FPS</strong>
+                                    <span>
+                                        Choose the frame rate that fits
+                                        your stream.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="quality-panel">
+
+                        <div class="quality-header">
+
+                            <strong>Stream Settings</strong>
+
+                            <span class="live-badge">
+                                ● Ready
+                            </span>
+
+                        </div>
+
+
+                        <div class="quality-options">
+
+                            <div class="quality-option">
+                                <strong>720p</strong>
+                                <span>HD</span>
+                            </div>
+
+                            <div class="quality-option active">
+                                <strong>1080p</strong>
+                                <span>FULL HD</span>
+                            </div>
+
+                            <div class="quality-option">
+                                <strong>4K</strong>
+                                <span>ULTRA HD</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="fps-row">
+
+                            <div class="fps">
+                                30 FPS
+                            </div>
+
+                            <div class="fps active">
+                                60 FPS
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             HOW IT WORKS
+        ========================== -->
+
+        <section class="section" id="how-it-works">
+
+            <div class="container">
+
+                <div class="section-label">
+                    How it works
+                </div>
+
+                <h2 class="section-title">
+                    Three steps.<br>
+                    That's it.
+                </h2>
+
+                <p class="section-description">
+                    You don't need an account, an application or a technical
+                    setup. Stream Sultan is built around a simple link-based
+                    experience.
+                </p>
+
+
+                <div class="steps">
+
+                    <div class="step">
+
+                        <div class="step-number">01</div>
+
+                        <h3>Start a Stream</h3>
+
+                        <p>
+                            Open the Stream Sultan sharing page and choose
+                            the quality and frame rate you want to use.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <div class="step-number">02</div>
+
+                        <h3>Share Your Screen</h3>
+
+                        <p>
+                            Select the screen or window you want to share.
+                            Your browser handles the screen capture and
+                            connection setup.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step">
+
+                        <div class="step-number">03</div>
+
+                        <h3>Send the Link</h3>
+
+                        <p>
+                            Stream Sultan creates a unique viewing link.
+                            Send that link to your friends and they can
+                            connect to your active stream.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div style="text-align:center;margin-top:40px;">
+
+                    <a href="sender.html" class="btn btn-primary">
+                        Start a Stream →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             P2P EXPLANATION
+        ========================== -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="section-label">
+                    Built for direct streaming
+                </div>
+
+                <h2 class="section-title">
+                    Your screen goes<br>
+                    where it needs to go.
+                </h2>
+
+                <p class="section-description">
+                    Stream Sultan uses WebRTC-based peer-to-peer connections
+                    for live screen delivery. The goal is straightforward:
+                    connect the broadcaster and viewers and let the stream
+                    flow in real time.
+                </p>
+
+
+                <div class="p2p-card">
+
+                    <div>
+
+                        <h3>
+                            Peer-to-peer streaming
+                        </h3>
+
+                        <p>
+                            Once a viewer connects to an active stream,
+                            a WebRTC connection is established between the
+                            broadcaster and the viewer. Stream Sultan does
+                            not turn your live screen into a recorded video
+                            file.
+                        </p>
+
+                        <p>
+                            This keeps the experience focused on what matters:
+                            real-time screen sharing without a traditional
+                            video hosting workflow.
+                        </p>
+
+                    </div>
+
+
+                    <div class="connection-diagram">
+
+                        <div class="node">
+
+                            <div class="node-icon">▣</div>
+
+                            <span>Broadcaster</span>
+
+                        </div>
+
+                        <div class="connection-line"></div>
+
+                        <div class="node">
+
+                            <div class="node-icon">◉</div>
+
+                            <span>Viewer</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             USE CASES
+        ========================== -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="section-label">
+                    Made for everyday sharing
+                </div>
+
+                <h2 class="section-title">
+                    Whatever you're<br>
+                    showing, share it.
+                </h2>
+
+                <p class="section-description">
+                    Stream Sultan isn't tied to one particular type of content.
+                    If it is on your screen, you can share it.
+                </p>
+
+
+                <div class="use-cases">
+
+                    <div class="use-case">
+
+                        <div class="use-case-icon">🎮</div>
+
+                        <h3>Gaming</h3>
+
+                        <p>
+                            Show your gameplay to friends without setting up
+                            a full streaming platform.
+                        </p>
+
+                    </div>
+
+
+                    <div class="use-case">
+
+                        <div class="use-case-icon">💻</div>
+
+                        <h3>Projects</h3>
+
+                        <p>
+                            Share software, websites, prototypes and
+                            development work in real time.
+                        </p>
+
+                    </div>
+
+
+                    <div class="use-case">
+
+                        <div class="use-case-icon">🎬</div>
+
+                        <h3>Watching Together</h3>
+
+                        <p>
+                            Share what's happening on your screen while
+                            spending time with friends.
+                        </p>
+
+                    </div>
+
+
+                    <div class="use-case">
+
+                        <div class="use-case-icon">📚</div>
+
+                        <h3>Presentations</h3>
+
+                        <p>
+                            Quickly show a presentation, document or
+                            browser window to other people.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PRIVACY
+        ========================== -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="section-label">
+                    Privacy focused by design
+                </div>
+
+                <h2 class="section-title">
+                    Live means live.
+                </h2>
+
+                <p class="section-description">
+                    Stream Sultan is designed around temporary live sessions,
+                    not permanent video hosting.
+                </p>
+
+
+                <div class="privacy-box">
+
+                    <div class="privacy-icon">
+                        🔒
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Your stream isn't a recording.
+                        </h3>
+
+                        <p>
+                            Streams are designed to be transmitted live
+                            through peer-to-peer WebRTC connections rather
+                            than being saved as videos for later playback.
+                            There is no user account system required to start
+                            or watch a stream.
+                        </p>
+
+                        <a href="privacy.html" class="privacy-link">
+                            Learn more about privacy →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FAQ
+        ========================== -->
+
+        <section class="section" id="faq">
+
+            <div class="container">
+
+                <div class="section-label">
+                    Frequently asked questions
+                </div>
+
+                <h2 class="section-title">
+                    Questions?<br>
+                    We've got answers.
+                </h2>
+
+                <p class="section-description">
+                    A few things you may want to know before starting your
+                    first Stream Sultan session.
+                </p>
+
+
+                <div class="faq">
+
+                    <details>
+                        <summary>Do I need an account?</summary>
+
+                        <p>
+                            No. Stream Sultan does not require an account,
+                            registration or login.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>Do viewers need an account?</summary>
+
+                        <p>
+                            No. A viewer can connect using the viewing link
+                            generated for the active stream.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>What quality can I stream in?</summary>
+
+                        <p>
+                            The broadcaster can select 720p, 1080p or 4K,
+                            depending on what their setup and connection
+                            can support.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>Can I stream at 60 FPS?</summary>
+
+                        <p>
+                            Yes. Stream Sultan supports both 30 FPS and
+                            60 FPS stream settings.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>Is system audio supported?</summary>
+
+                        <p>
+                            Yes. Screen sharing can include supported
+                            system audio along with the shared screen.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>Can multiple people watch?</summary>
+
+                        <p>
+                            Yes. Multiple viewers can connect to an active
+                            stream using its viewing link.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>Are streams recorded?</summary>
+
+                        <p>
+                            Stream Sultan is designed for live streaming.
+                            Streams are not saved as recordings for later
+                            playback.
+                        </p>
+                    </details>
+
+
+                    <details>
+                        <summary>What happens if the broadcaster disconnects?</summary>
+
+                        <p>
+                            The current session ends when the broadcaster
+                            disconnects. The broadcaster can start a new
+                            session and share the newly generated link.
+                        </p>
+                    </details>
+
+                </div>
+
+
+                <div style="text-align:center;margin-top:38px;">
+
+                    <a href="faq.html" class="btn btn-secondary">
+                        View Full FAQ →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             FINAL CTA
+        ========================== -->
+
+        <section class="final-cta">
+
+            <div class="container final-cta-content">
+
+                <div class="section-label">
+                    Ready when you are
+                </div>
+
+                <h2 style="margin-top:22px;">
+                    Your next stream is
+                    one click away.
+                </h2>
+
+                <p>
+                    No account. No installation. No complicated setup.
+                    Open Stream Sultan, start sharing and send your link.
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a href="sender.html" class="btn btn-primary">
+                        Start Sharing
+                        <span>→</span>
+                    </a>
+
+                    <a href="how-to.html" class="btn btn-secondary">
+                        Learn How It Works
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="footer-top">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="brand">
+                        <div class="brand-mark">S</div>
+                        <span>Stream Sultan</span>
+                    </a>
+
+                    <p>
+                        Simple, browser-based screen sharing for people who
+                        just want to share their screen and let others watch.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>Product</h4>
+
+                    <a href="sender.html">
+                        Start Streaming
+                    </a>
+
+                    <a href="#features">
+                        Features
+                    </a>
+
+                    <a href="#quality">
+                        Quality
+                    </a>
+
+                    <a href="#how-it-works">
+                        How It Works
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>Resources</h4>
+
+                    <a href="how-to.html">
+                        Getting Started
+                    </a>
+
+                    <a href="faq.html">
+                        FAQ
+                    </a>
+
+                    <a href="privacy.html">
+                        Privacy
+                    </a>
+
+                </div>
+
+
+                <div class="footer-column">
+
+                    <h4>Stream Sultan</h4>
+
+                    <a href="index.html">
+                        Home
+                    </a>
+
+                    <a href="sender.html">
+                        Share Your Screen
+                    </a>
+
+                    <a href="#features">
+                        Features
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                <span>
+                    © 2026 Stream Sultan. All rights reserved.
+                </span>
+
+                <span>
+                    Built for simple, real-time screen sharing.
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+</body>
+</html>
